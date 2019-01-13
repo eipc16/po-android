@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_trips"
+            android:title="@string/trips_drawer" />
+        <item
+            android:id="@+id/nav_bages"
+            android:title="@string/badges_drawer" />
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/settings_drawer" />
+        <item
+            android:id="@+id/nav_login"
+            android:title="@string/login_drawer"
+            android:visible="false"/>
+        <item
+            android:id="@+id/nav_logout"
+            android:title="@string/logout_drawer" />
+    </group>
+
+</menu>

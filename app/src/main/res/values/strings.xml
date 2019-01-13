@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">MountainMaps</string>
+    <string name="title_activity_login">Zaloguj się</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Hasło</string>
+    <string name="action_sign_in">Zaloguj się lub zarejestruj!</string>
+    <string name="action_sign_in_short">Zaloguj się</string>
+    <string name="error_invalid_email">Niepoprawny adres Email</string>
+    <string name="error_invalid_password">Hasło jest za krótkie</string>
+    <string name="error_incorrect_password">Niepoprawne hasło</string>
+    <string name="error_field_required">To pole jest wymagane</string>
+    <string name="permission_rationale">"Autouzupełnianie wymaga uprawnień do przeglądania kontaktów.</string>
+
+    <string name="trips_drawer">Trasy</string>
+    <string name="badges_drawer">Odznaki</string>
+    <string name="login_drawer">Zaloguj się!</string>
+    <string name="logout_drawer">Wyloguj się!</string>
+    <string name="settings_drawer">Ustawienia</string>
+
+    <string name="badges_next">Następna odznaka: %s</string>
+    <string name="badges_points">Posiadane punkty: %d</string>
+    <string name="badges_req_points">Wymagane punkty: %d</string>
+    <string name="badges_diff">Brakujące punkty: %d</string>
+    <string name="badges_completed_1">Gratulacje!</string>
+    <string name="badges_completed_2">Zdobyłeś wszystkie możliwe odznaki</string>
+    <string name="badges_name">Nazwa: %s</string>
+    <string name="badges_date">Data zdobycia: %s</string>
+    <string name="badges_image_description">Zdjęcie odznaki</string>
+</resources>
