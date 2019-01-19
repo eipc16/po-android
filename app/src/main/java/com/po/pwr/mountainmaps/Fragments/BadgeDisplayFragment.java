@@ -19,11 +19,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
+import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 
 public class BadgeDisplayFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    public final static Integer id = 2;
+    public String title;
 
     private String mParam1 = "";
     private String mParam2 = "";
@@ -58,17 +62,19 @@ public class BadgeDisplayFragment extends Fragment {
 
         /* Pobierz i przygotuj dane o nastepnej odznace */
         try {
-            NextBadgeTask task = (NextBadgeTask) new NextBadgeTask(getContext(), view).execute("http://10.0.2.2:8080/hikers/" + hiker_id + "/next");
+            NextBadgeTask task = (NextBadgeTask) new NextBadgeTask(getContext(), view).execute(request_address + "/hikers/" + hiker_id + "/next");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         /* Pobierz i przygotuj liste odznak usera */
         try {
-            BadgesTask task = (BadgesTask) new BadgesTask(getContext(), view).execute("http://10.0.2.2:8080/hikers/" + hiker_id + "/badges");
+            BadgesTask task = (BadgesTask) new BadgesTask(getContext(), view).execute(request_address + "/hikers/" + hiker_id + "/badges");
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        title = getResources().getString(R.string.badges_drawer);
 
         return view;
     }

@@ -4,15 +4,16 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Fragments.BadgeDisplayFragment;
@@ -21,12 +22,15 @@ import com.po.pwr.mountainmaps.Fragments.TripListFragment;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.DrawerNameTask;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements BadgeDisplayFragment.OnFragmentInteractionListener, TripListFragment.OnFragmentInteractionListener {
 
     private DrawerLayout mDrawerLayout;
     private int curr_fragment = 0;
 
     public static String hiker_id = "1";
+    public static String request_address = "http://192.168.1.16:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
 
             @Override
             public void onDrawerOpened(@NonNull View view) {
-                DrawerNameTask task = (DrawerNameTask) new DrawerNameTask(getApplicationContext(), mDrawerLayout).execute("http://10.0.2.2:8080/hikers/" + hiker_id + "/credentials");
+                DrawerNameTask task = (DrawerNameTask) new DrawerNameTask(getApplicationContext(), mDrawerLayout).execute(request_address + "/hikers/" + hiker_id + "/credentials");
             }
 
             @Override

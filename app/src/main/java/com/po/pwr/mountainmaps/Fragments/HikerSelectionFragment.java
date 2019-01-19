@@ -1,8 +1,5 @@
 package com.po.pwr.mountainmaps.Fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,14 +10,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.po.pwr.mountainmaps.Models.Badge;
 import com.po.pwr.mountainmaps.R;
-import com.po.pwr.mountainmaps.Utils.DrawerNameTask;
 
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
+import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 
 public class HikerSelectionFragment extends Fragment {
+
+    public final static Integer id = 3;
+    public String title;
 
     public static BadgeDetailFragment newInstance() {
         return new BadgeDetailFragment();
@@ -34,12 +33,27 @@ public class HikerSelectionFragment extends Fragment {
         final Button hikerButton = view.findViewById(R.id.hikerButton);
         final EditText hikerId = view.findViewById(R.id.hikerId);
 
+        final Button ipButton = view.findViewById(R.id.ipButton);
+        final EditText ipAdress = view.findViewById(R.id.ipAdress);
+
         hikerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 hiker_id = hikerId.getText().toString();
             }
         });
+
+        ipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                request_address = ipAdress.getText().toString();
+            }
+        });
+
+        hikerId.setText(hiker_id);
+        ipAdress.setText(request_address);
+
+        title = getResources().getString(R.string.settings_drawer);
 
         return view;
     }
