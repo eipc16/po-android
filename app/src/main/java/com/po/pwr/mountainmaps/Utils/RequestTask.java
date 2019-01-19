@@ -1,6 +1,9 @@
 package com.po.pwr.mountainmaps.Utils;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -40,7 +43,7 @@ public class RequestTask extends AsyncTask<String, String, String> {
         } catch (IOException e) {
             //TODO Handle problems..
         }
-        result = responseString;
+        System.out.println("mamama: " + responseString);
         return responseString;
     }
 

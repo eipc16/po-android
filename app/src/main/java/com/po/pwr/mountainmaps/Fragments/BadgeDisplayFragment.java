@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.po.pwr.mountainmaps.Models.Badge;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.DisplayBadgePagerAdapter;
+import com.po.pwr.mountainmaps.Utils.NextBadgeTask;
 import com.po.pwr.mountainmaps.Utils.RequestTask;
 
 import org.json.JSONArray;
@@ -27,9 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Date;
 import java.util.ArrayList;
 
 
@@ -37,13 +36,7 @@ public class BadgeDisplayFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private String mParam1;
-    private String mParam2;
-
-    private TextView nextBadgeName;
-    private TextView currentPoints;
-    private TextView requiredPoints;
-    private TextView missingPoints;
+    private String hiker_id = "1";
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,36 +67,8 @@ public class BadgeDisplayFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_badge_display, container, false);
 
         /* Pobierz i przygotuj dane o nastepnej odznace */
-
-        nextBadgeName = view.findViewById(R.id.badge_next);
-        currentPoints = view.findViewById(R.id.badge_points);
-        requiredPoints = view.findViewById(R.id.badge_req_points);
-        missingPoints = view.findViewById(R.id.badge_diff);
-
         try {
-            //JSONObject next_badge = new JSONObject(loadJSONFromAsset(view.getContext(), "next_badge.json"));
-
-            //RequestTask task = (RequestTask) new RequestTask().execute("http://10.0.2.2:8080/badges/2/points");
-            //Log.d("XDD", task.result);
-            JSONObject next_badge = new JSONObject(loadJSONfromURL("http://10.0.2.2:8080/badges/2/points", "GET"));
-            if(next_badge.length() > 0) {
-                String name = next_badge.getString("next_badge");
-                Integer currentPointsValue = Integer.parseInt(next_badge.getString("current_points"));
-                Integer requiredPointsValue = Integer.parseInt(next_badge.getString("required_points"));
-                Integer missingPointsValue = Integer.parseInt(next_badge.getString("missing_points"));
-
-                nextBadgeName.setText(view.getContext().getString(R.string.badges_name, name));
-                currentPoints.setText(view.getContext().getString(R.string.badges_points, currentPointsValue));
-                requiredPoints.setText(view.getContext().getString(R.string.badges_req_points, requiredPointsValue));
-                missingPoints.setText(view.getContext().getString(R.string.badges_diff, missingPointsValue));
-            } else {
-                nextBadgeName.setText(view.getContext().getString(R.string.badges_completed_1));
-                currentPoints.setText(view.getContext().getString(R.string.badges_completed_2));
-                requiredPoints.setVisibility(View.INVISIBLE);
-                missingPoints.setVisibility(View.INVISIBLE);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            NextBadgeTask task = (NextBadgeTask) new NextBadgeTask(getContext(), view).execute("http://10.0.2.2:8080/hikers/" + hiker_id + "/next");
         } catch (Exception e) {
             e.printStackTrace();
         }
