@@ -2,18 +2,14 @@ package com.po.pwr.mountainmaps.Utils;
 
 import android.content.Context;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.TextView;
 
-import com.po.pwr.mountainmaps.Models.Badge;
 import com.po.pwr.mountainmaps.R;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 
 public class DrawerNameTask extends RequestTask {
     private Context context;

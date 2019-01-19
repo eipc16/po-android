@@ -25,6 +25,9 @@ public class TripListFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    public final static Integer id = 0;
+    public String title;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -66,7 +69,9 @@ public class TripListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_trip_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_trip_list, container, false);
+        title = getResources().getString(R.string.trips_drawer);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

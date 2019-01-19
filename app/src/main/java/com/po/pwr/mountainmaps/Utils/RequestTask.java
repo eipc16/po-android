@@ -43,7 +43,6 @@ public class RequestTask extends AsyncTask<String, String, String> {
         } catch (IOException e) {
             //TODO Handle problems..
         }
-        System.out.println("mamama: " + responseString);
         return responseString;
     }
 
