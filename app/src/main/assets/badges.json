@@ -1,51 +1,14 @@
-{
-  "badges": [
-    {
-      "id": 0,
-      "display_name": "W góry",
-      "name": "badge_0",
-      "points": [
-        15,
-        30,
-        45
-      ],
-      "date": ["12/12/2012", "13/12/2012", "14/12/2012"]
-    },
-    {
-      "id": 3,
-      "display_name": "GOT PTTK Popularna",
-      "name": "badge_1",
-      "points": [60],
-      "date": ["13/12/2012"]
-    },
-    {
-      "id": 4,
-      "display_name": "GOT PTTK Mała",
-      "name": "badge_2_",
-      "points": [
-        120,
-        360,
-        720
-      ],
-      "date": ["16/12/2012", "18/12/2012", "20/12/2012"]
-    },
-    {
-      "id": 7,
-      "display_name": "GOT PTTK Duża",
-      "name": "badge_3",
-      "points": [
-        1000,
-        1500,
-        3000
-      ],
-      "date": ["12/12/2013", "13/12/2013", "14/12/2013"]
-    },
-    {
-      "id": 10,
-      "display_name": "Za wytrwałość",
-      "name": "badge_4",
-      "points": [10001],
-      "date": ["13/13/2013"]
-    }
-  ]
-}
+[
+  {
+    "date":"2019-01-01",
+    "name":"badge_2",
+    "id":"2",
+    "display_name":"W góry - Brązowa"
+  },
+  {
+    "date":"2019-01-02",
+    "name":"badge_3",
+    "id":"3",
+    "display_name":"W góry - Srebrna"
+  }
+]

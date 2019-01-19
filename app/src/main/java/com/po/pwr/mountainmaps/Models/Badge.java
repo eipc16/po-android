@@ -8,14 +8,12 @@ public class Badge extends ViewModel {
 
     private Integer id;
     private String display_name, name;
-    private Integer points;
     private String date;
 
-    public Badge(Integer id, String display_name, String name, Integer points, String date) {
+    public Badge(Integer id, String display_name, String name, String date) {
         this.id = id;
         this.display_name = display_name;
         this.name = name;
-        this.points = points;
         this.date = date;
     }
 
@@ -28,12 +26,9 @@ public class Badge extends ViewModel {
     }
 
     public String getName() {
-        return name + id;
+        return name;
     }
 
-    public Integer getPoints() {
-        return points;
-    }
 
     public String getDate() {
         return date;
@@ -42,6 +37,6 @@ public class Badge extends ViewModel {
     @Override
     public String toString() {
 
-        return String.format(Locale.US, "ID: %d, DisplayName: %s, Name: %s, Points: %d, Date: %s", getId(), getDisplayName(), getName(), getPoints(), getDate());
+        return String.format(Locale.US, "ID: %d, DisplayName: %s, Name: %s, Date: %s", getId(), getDisplayName(), getName(), getDate());
     }
 }

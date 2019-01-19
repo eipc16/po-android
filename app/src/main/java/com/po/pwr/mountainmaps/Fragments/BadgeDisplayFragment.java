@@ -3,6 +3,7 @@ package com.po.pwr.mountainmaps.Fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -10,17 +11,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.po.pwr.mountainmaps.Models.Badge;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.DisplayBadgePagerAdapter;
+import com.po.pwr.mountainmaps.Utils.RequestTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.Date;
 import java.util.ArrayList;
 
 
@@ -30,6 +39,11 @@ public class BadgeDisplayFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+
+    private TextView nextBadgeName;
+    private TextView currentPoints;
+    private TextView requiredPoints;
+    private TextView missingPoints;
 
     private OnFragmentInteractionListener mListener;
 
@@ -59,36 +73,54 @@ public class BadgeDisplayFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_badge_display, container, false);
 
-        ArrayList<Badge> badgeList = new ArrayList<>();
+        /* Pobierz i przygotuj dane o nastepnej odznace */
 
-        JSONObject json = null;
+        nextBadgeName = view.findViewById(R.id.badge_next);
+        currentPoints = view.findViewById(R.id.badge_points);
+        requiredPoints = view.findViewById(R.id.badge_req_points);
+        missingPoints = view.findViewById(R.id.badge_diff);
+
         try {
-            json = new JSONObject(loadJSONFromAsset(view.getContext(), "badges.json"));
-            JSONArray json_array = json.getJSONArray("badges");
-            for(int i = 0; i < json_array.length(); i++) {
-                JSONObject json_element = json_array.getJSONObject(i);
-                JSONArray json_dates = json_element.getJSONArray("date");
-                JSONArray json_points = json_element.getJSONArray("points");
+            //JSONObject next_badge = new JSONObject(loadJSONFromAsset(view.getContext(), "next_badge.json"));
 
-                String displayName = "";
-                String[] badgeLevels = {"Brązowa", "Srebrna", "Złota"};
+            //RequestTask task = (RequestTask) new RequestTask().execute("http://10.0.2.2:8080/badges/2/points");
+            //Log.d("XDD", task.result);
+            JSONObject next_badge = new JSONObject(loadJSONfromURL("http://10.0.2.2:8080/badges/2/points", "GET"));
+            if(next_badge.length() > 0) {
+                String name = next_badge.getString("next_badge");
+                Integer currentPointsValue = Integer.parseInt(next_badge.getString("current_points"));
+                Integer requiredPointsValue = Integer.parseInt(next_badge.getString("required_points"));
+                Integer missingPointsValue = Integer.parseInt(next_badge.getString("missing_points"));
 
-                for(int j = 0; j < json_dates.length(); j++) {
-                    if(!json_dates.getString(j).equals("")) {
+                nextBadgeName.setText(view.getContext().getString(R.string.badges_name, name));
+                currentPoints.setText(view.getContext().getString(R.string.badges_points, currentPointsValue));
+                requiredPoints.setText(view.getContext().getString(R.string.badges_req_points, requiredPointsValue));
+                missingPoints.setText(view.getContext().getString(R.string.badges_diff, missingPointsValue));
+            } else {
+                nextBadgeName.setText(view.getContext().getString(R.string.badges_completed_1));
+                currentPoints.setText(view.getContext().getString(R.string.badges_completed_2));
+                requiredPoints.setVisibility(View.INVISIBLE);
+                missingPoints.setVisibility(View.INVISIBLE);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-                        displayName = json_element.getString("display_name");
-
-                        if(json_dates.length() > 1) {
-                            displayName = displayName + " "  + badgeLevels[j];
-                        }
-
-                        badgeList.add(new Badge(json_element.getInt("id") + j
-                                , displayName
-                                , "badge_"
-                                , json_points.getInt(j)
-                                , json_dates.getString(j)));
-                    }
-                }
+        /* Pobierz i przygotuj liste odznak usera */
+        ArrayList<Badge> badgeList = new ArrayList<>();
+        JSONArray json = null;
+        try {
+            json = new JSONArray(loadJSONFromAsset(view.getContext(), "badges.json"));
+            for(int i = 0; i < json.length(); i++) {
+                JSONObject e = json.getJSONObject(i);
+                badgeList.add(new Badge(
+                        Integer.parseInt(e.getString("id")),
+                        e.getString("display_name"),
+                        "badge_" + (Integer.parseInt(e.getString("id")) - 2),
+                        e.getString("date")
+                ));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -156,24 +188,28 @@ public class BadgeDisplayFragment extends Fragment {
 
     }
 
-    /*
+    public String loadJSONfromURL(String path, String method) throws Exception {
+        URL url = new URL(path);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
-    Button button = view.findViewById(R.id.buttonJSON);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    JSONObject json = new JSONObject(loadJSONFromAsset(v.getContext(), "badges.json"));
-                    JSONArray json_array = json.getJSONArray("badges");
-                    for(int i = 0; i < json_array.length(); i++) {
-                        JSONObject json_element = json_array.getJSONObject(i);
-                        Log.d("json_log", "ID: " + json_element.getInt("id") + " | Display: " + json_element.getString("display_name"));
-                    }
+        con.setRequestMethod(method);
+        con.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-     */
+        int responseCode = con.getResponseCode();
+        System.out.println("\nSending GET request to URL" + path);
+        System.out.println("Reponse Code: " + responseCode);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        System.out.println(response.toString());
+
+        return response.toString();
+    }
 }
