@@ -3,26 +3,13 @@ package com.po.pwr.mountainmaps.Fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.po.pwr.mountainmaps.Models.Badge;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.BadgesTask;
-import com.po.pwr.mountainmaps.Utils.DisplayBadgePagerAdapter;
 import com.po.pwr.mountainmaps.Utils.NextBadgeTask;
-import com.po.pwr.mountainmaps.Utils.RequestTask;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,14 +17,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+
+import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 
 
 public class BadgeDisplayFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    private String hiker_id = "2";
 
     private String mParam1 = "";
     private String mParam2 = "";

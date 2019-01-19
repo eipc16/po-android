@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Fragments.BadgeDisplayFragment;
+import com.po.pwr.mountainmaps.Fragments.HikerSelectionFragment;
 import com.po.pwr.mountainmaps.Fragments.TripListFragment;
 import com.po.pwr.mountainmaps.R;
 
@@ -21,6 +22,8 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
 
     private DrawerLayout mDrawerLayout;
     private int curr_fragment = 0;
+
+    public static String hiker_id = "1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +59,10 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
 
                 if (menuItem.getTitle().equals(getResources().getString(R.string.trips_drawer)) && curr_fragment != 0) {
                     curr_fragment = 0;
-                }   else if (menuItem.getTitle().equals(getResources().getString(R.string.badges_drawer)) && curr_fragment != 1) {
+                } else if (menuItem.getTitle().equals(getResources().getString(R.string.badges_drawer)) && curr_fragment != 1) {
                     curr_fragment = 1;
+                } else if (menuItem.getTitle().equals("Ustawienia") && curr_fragment != 2) {
+                    curr_fragment = 2;
                 } else {
                     curr_fragment = -1;
                 }
@@ -67,8 +72,10 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
 
                     if (curr_fragment == 0) {
                         fragment = new TripListFragment();
-                    } else {
+                    } else if(curr_fragment == 1) {
                         fragment = new BadgeDisplayFragment();
+                    } else {
+                        fragment = new HikerSelectionFragment();
                     }
 
                     mDrawerLayout.setDrawerTitle(GravityCompat.START, menuItem.getTitle());
