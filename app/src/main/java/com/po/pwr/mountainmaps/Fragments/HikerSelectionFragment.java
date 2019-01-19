@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 import com.po.pwr.mountainmaps.Models.Badge;
 import com.po.pwr.mountainmaps.R;
+import com.po.pwr.mountainmaps.Utils.DrawerNameTask;
 
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 

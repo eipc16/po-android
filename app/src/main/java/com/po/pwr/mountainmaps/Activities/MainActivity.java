@@ -11,12 +11,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Fragments.BadgeDisplayFragment;
 import com.po.pwr.mountainmaps.Fragments.HikerSelectionFragment;
 import com.po.pwr.mountainmaps.Fragments.TripListFragment;
 import com.po.pwr.mountainmaps.R;
+import com.po.pwr.mountainmaps.Utils.DrawerNameTask;
 
 public class MainActivity extends AppCompatActivity implements BadgeDisplayFragment.OnFragmentInteractionListener, TripListFragment.OnFragmentInteractionListener {
 
@@ -51,6 +54,28 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View view, float v) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View view) {
+                DrawerNameTask task = (DrawerNameTask) new DrawerNameTask(getApplicationContext(), mDrawerLayout).execute("http://10.0.2.2:8080/hikers/" + hiker_id + "/credentials");
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View view) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int i) {
+
+            }
+        });
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -61,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
                     curr_fragment = 0;
                 } else if (menuItem.getTitle().equals(getResources().getString(R.string.badges_drawer)) && curr_fragment != 1) {
                     curr_fragment = 1;
-                } else if (menuItem.getTitle().equals("Ustawienia") && curr_fragment != 2) {
+                } else if (menuItem.getTitle().equals(getResources().getString(R.string.settings_drawer)) && curr_fragment != 2) {
                     curr_fragment = 2;
                 } else {
                     curr_fragment = -1;
@@ -86,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
                     transaction.commit();
 
                     actionBar.setTitle(menuItem.getTitle());
-
                 } else {
                     Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
                 }
