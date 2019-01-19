@@ -1,0 +1,51 @@
+package com.po.pwr.mountainmaps.Fragments;
+
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.po.pwr.mountainmaps.Models.Badge;
+import com.po.pwr.mountainmaps.R;
+import com.po.pwr.mountainmaps.Utils.DrawerNameTask;
+
+import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
+
+
+public class HikerSelectionFragment extends Fragment {
+
+    public static BadgeDetailFragment newInstance() {
+        return new BadgeDetailFragment();
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.fragment_hiker_selection, container, false);
+
+        final Button hikerButton = view.findViewById(R.id.hikerButton);
+        final EditText hikerId = view.findViewById(R.id.hikerId);
+
+        hikerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiker_id = hikerId.getText().toString();
+            }
+        });
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+}
