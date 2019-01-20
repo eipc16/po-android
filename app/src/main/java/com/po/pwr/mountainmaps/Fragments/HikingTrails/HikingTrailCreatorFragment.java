@@ -15,8 +15,10 @@ import android.widget.Toast;
 import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Models.HikingTrail;
 import com.po.pwr.mountainmaps.R;
+import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
 
 import static android.content.Intent.EXTRA_TITLE;
+import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailCreatorFragment extends Fragment {
 
@@ -50,6 +52,14 @@ public class HikingTrailCreatorFragment extends Fragment {
             activity.curr_fragment = id;
             activity.getSupportActionBar().setTitle(title);
         }
+
+        new RequestTask(new RequestTask.OnTaskExecutedListener() {
+            @Override
+            public void onTaskExecuted(String result) {
+
+            }
+        }).execute(request_address + "/points/all");
+
 
         return view;
     }
