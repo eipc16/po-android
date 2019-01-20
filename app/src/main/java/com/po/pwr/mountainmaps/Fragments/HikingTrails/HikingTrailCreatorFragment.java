@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -42,7 +43,11 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
     public String title;
 
     //title = (getResources().getString(R.string.new_hikingtrail));
-    ArrayList <Point> points = new ArrayList<>();
+    ArrayList<Point> points = new ArrayList<>();
+    ArrayList<Point> trailPoints = new ArrayList<>();
+    RecyclerView recyclerView;
+    RecyclerView.Adapter adapter;
+    RecyclerView.LayoutManager layoutManager;
 
     public HikingTrailCreatorFragment() {
     }
@@ -66,7 +71,7 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
         final Button addButton = view.findViewById(R.id.addButton);
         addButton.setOnClickListener(this);
 
-        if(activity != null) {
+        if (activity != null) {
             activity.curr_fragment = id;
             activity.getSupportActionBar().setTitle(title);
         }
@@ -75,10 +80,6 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
             @Override
             public void onTaskExecuted(String result) {
 
-
-                RecyclerView recyclerView;
-                RecyclerView.Adapter adapter;
-                RecyclerView.LayoutManager layoutManager;
 
                 JSONArray jsonArray = null;
                 try {
@@ -93,21 +94,20 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
                 }
                 Log.d("points", points.toString());
 
-                /*
+
                 recyclerView = view.findViewById(R.id.hikingTrailPointsList);
                 recyclerView.setHasFixedSize(true);
 
                 layoutManager = new LinearLayoutManager(getContext());
                 recyclerView.setLayoutManager(layoutManager);
 
-                adapter = new PointListAdapter(points, new PointListAdapter.OnItemClickListener() {
+                adapter = new PointListAdapter(trailPoints, new PointListAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v) {
 
                     }
                 });
                 recyclerView.setAdapter(adapter);
-*/
 
 
             }
@@ -135,9 +135,27 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
 
             PopupMenu popupMenu = new PopupMenu(getActivity(), v);
 
-            for (Point p: points)
+            for (Point p : points)
                 popupMenu.getMenu().add(p.getName());
             popupMenu.show();
+
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Point point = null;
+                    for (Point p: points) {
+                        if (p.getName().contentEquals(item.getTitle())) {
+                            point = p;
+                            break;
+                        }
+                    }
+                    trailPoints.add(point);
+
+                    adapter.notifyDataSetChanged();
+
+                    return true;
+                }
+            });
         }
 
 
