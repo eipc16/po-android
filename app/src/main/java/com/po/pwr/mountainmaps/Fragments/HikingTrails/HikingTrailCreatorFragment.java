@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
@@ -28,11 +29,14 @@ import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 import static android.content.Intent.EXTRA_TITLE;
+import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailCreatorFragment extends Fragment implements View.OnClickListener {
@@ -69,7 +73,9 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
         title = getArguments().getString(EXTRA_TITLE);
 
         final Button addButton = view.findViewById(R.id.addButton);
+        final Button saveButton = view.findViewById(R.id.saveButton);
         addButton.setOnClickListener(this);
+        saveButton.setOnClickListener(this);
 
         if (activity != null) {
             activity.curr_fragment = id;
@@ -132,9 +138,7 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.addButton) {
-
             PopupMenu popupMenu = new PopupMenu(getActivity(), v);
-
             for (Point p : points)
                 popupMenu.getMenu().add(p.getName());
             popupMenu.show();
@@ -143,7 +147,7 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     Point point = null;
-                    for (Point p: points) {
+                    for (Point p : points) {
                         if (p.getName().contentEquals(item.getTitle())) {
                             point = p;
                             break;
@@ -156,6 +160,42 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
                     return true;
                 }
             });
+        } else if (id == R.id.saveButton) {
+
+            final TextView nameText = getView().findViewById(R.id.hikingTrailName);
+            final TextView dateText = getView().findViewById(R.id.hikingTrailDate);
+
+
+            String name = nameText.getText().toString();
+            Log.d("name", name);
+            String date = dateText.getText().toString();
+
+            new RequestTask(new RequestTask.OnTaskExecutedListener() {
+                @Override
+                public void onTaskExecuted(String result) {
+
+                }
+            }).execute(request_address + "/hikers/" + hiker_id + "/add/hiking_trails?name=" + name);
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            for (int i = 0; i < trailPoints.size(); i++) {
+                Point p = trailPoints.get(i);
+                stringBuilder.append(p.getId());
+                if (i < trailPoints.size() - 1)
+                    stringBuilder.append(',');
+            }
+
+            String data = stringBuilder.toString();
+
+            new RequestTask(new RequestTask.OnTaskExecutedListener() {
+                @Override
+                public void onTaskExecuted(String result) {
+                    Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
+                }
+            }).execute(request_address + "/hiking_trails/update/" + name + "/points?data=" + data);
+
+
         }
 
 
