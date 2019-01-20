@@ -36,4 +36,12 @@
 
     <string name="new_hikingtrail">Utwórz trasę</string>
     <string name="update_hikingtrail">Modyfikuj trasę</string>
+
+    <string name="creator_hikingtrail_name">Nazwa trasy</string>
+    <string name="creator_date">Data</string>
+    <string name="creator_info_button">Info</string>
+    <string name="creator_add_button">Dodaj</string>
+    <string name="creator_reverse_button">Odwróć</string>
+    <string name="creator_save_button">ZAPISZ</string>
+
 </resources>
