@@ -5,24 +5,53 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.po.pwr.mountainmaps.Activities.MainActivity;
+import com.po.pwr.mountainmaps.Models.HikingTrail;
 import com.po.pwr.mountainmaps.R;
+
+import static android.content.Intent.EXTRA_TITLE;
 
 public class HikingTrailCreatorFragment extends Fragment {
 
     private HikingTrailCreatorViewModel mViewModel;
 
-    public static HikingTrailCreatorFragment newInstance() {
-        return new HikingTrailCreatorFragment();
+    public final static Integer id = 3;
+    public String title;
+
+    public HikingTrailCreatorFragment() {
+        //title = (getResources().getString(R.string.new_hikingtrail));
+    }
+
+    public static HikingTrailCreatorFragment newInstance(String title) {
+        HikingTrailCreatorFragment fragment = new HikingTrailCreatorFragment();
+        Bundle bundle = new Bundle(1);
+        bundle.putString(EXTRA_TITLE, title);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.hiking_trail_creator_fragment, container, false);
+        final View view = inflater.inflate(R.layout.hiking_trail_creator_fragment, container, false);
+
+        MainActivity activity = ((MainActivity) getActivity());
+
+        title = getArguments().getString(EXTRA_TITLE);
+
+        if(activity != null) {
+            activity.curr_fragment = id;
+            activity.getSupportActionBar().setTitle(title);
+        }
+
+        return view;
     }
 
     @Override

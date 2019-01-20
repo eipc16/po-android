@@ -26,8 +26,8 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements BadgeDisplayFragment.OnFragmentInteractionListener, HikingTrailListFragment.OnFragmentInteractionListener {
 
-    private DrawerLayout mDrawerLayout;
-    private int curr_fragment = 0;
+    public DrawerLayout mDrawerLayout;
+    public int curr_fragment = 0;
 
     public static String hiker_id = "1";
     public static String request_address = "http://192.168.1.16:8080";
@@ -37,10 +37,15 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.menu_drawer);
-        actionBar.setTitle(getResources().getString(R.string.trips_drawer));
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.menu_drawer);
+            actionBar.setTitle(getResources().getString(R.string.trips_drawer));
+        }
 
         if (findViewById(R.id.fragmentContainer) != null) {
             if (savedInstanceState != null) {
@@ -54,9 +59,6 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragmentContainer, firstFragment).addToBackStack(null).commit();
         }
-
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
 
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -116,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
                     Fragment fragment;
 
                     if (curr_fragment == 0) {
-                        fragment = new HikingTrailListFragment();
+                        fragment = HikingTrailListFragment.newInstance(getResources().getString(R.string.trips_drawer));
                     } else if(curr_fragment == 1) {
                         fragment = new BadgeDisplayFragment();
                     } else {
