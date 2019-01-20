@@ -1,7 +1,6 @@
-package com.po.pwr.mountainmaps.Utils;
+package com.po.pwr.mountainmaps.Utils.Adapters;
 
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,12 @@ import java.util.List;
 
 public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailListAdapter.MyViewHolder> {
 
+    public interface OnItemClickListener {
+        void onItemClick(View v);
+    }
+
     private List<HikingTrail> hikingTrails;
+    private final OnItemClickListener listener;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -26,10 +30,20 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
             super(layout);
             this.layout = layout;
         }
+
+        public void bind(final RelativeLayout item, final OnItemClickListener listener) {
+            item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(v);
+                }
+            });
+        }
     }
 
-    public HikingTrailListAdapter(List<HikingTrail> hikingTrails) {
+    public HikingTrailListAdapter(List<HikingTrail> hikingTrails, OnItemClickListener listener) {
         this.hikingTrails = hikingTrails;
+        this.listener = listener;
     }
 
 
@@ -47,6 +61,8 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         name.setText(hikingTrails.get(i).name);
         TextView date = myViewHolder.layout.findViewById(R.id.hikingTrailDate);
         date.setText(hikingTrails.get(i).date);
+
+        myViewHolder.bind(myViewHolder.layout, listener);
     }
 
     @Override

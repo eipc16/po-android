@@ -1,4 +1,4 @@
-package com.po.pwr.mountainmaps.Utils;
+package com.po.pwr.mountainmaps.Utils.Tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -18,7 +18,21 @@ import java.io.IOException;
 
 public class RequestTask extends AsyncTask<String, String, String> {
 
-    public String result = "";
+    public interface OnTaskExecutedListener {
+        void onTaskExecuted(String result);
+    }
+
+    private OnTaskExecutedListener listener;
+
+
+    public RequestTask(OnTaskExecutedListener listener) {
+        this.listener = listener;
+    }
+
+    Context context;
+
+
+    public RequestTask(){}
 
     @Override
     protected String doInBackground(String... uri) {
@@ -43,6 +57,7 @@ public class RequestTask extends AsyncTask<String, String, String> {
         } catch (IOException e) {
             //TODO Handle problems..
         }
+
         return responseString;
     }
 
@@ -50,5 +65,10 @@ public class RequestTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
         //Do anything with response..
+
+        if(result == null)
+            result = new String("[]");
+
+        listener.onTaskExecuted(result);
     }
 }

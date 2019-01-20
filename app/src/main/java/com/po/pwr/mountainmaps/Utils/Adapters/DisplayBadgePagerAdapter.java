@@ -1,4 +1,4 @@
-package com.po.pwr.mountainmaps.Utils;
+package com.po.pwr.mountainmaps.Utils.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.po.pwr.mountainmaps.Fragments.BadgeDisplayFragment;
 import com.po.pwr.mountainmaps.Models.Badge;
 import com.po.pwr.mountainmaps.R;
 
