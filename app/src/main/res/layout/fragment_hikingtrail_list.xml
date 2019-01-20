@@ -3,12 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.TripListFragment">
+    tools:context=".Fragments.HikingTrailListFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/listContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello trip list fragment" />
-
+        android:layout_height="match_parent" />
 </FrameLayout>
