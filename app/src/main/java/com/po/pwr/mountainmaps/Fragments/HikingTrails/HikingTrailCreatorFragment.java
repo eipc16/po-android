@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,16 @@ import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Models.HikingTrail;
+import com.po.pwr.mountainmaps.Models.Point;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static android.content.Intent.EXTRA_TITLE;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
@@ -56,6 +65,19 @@ public class HikingTrailCreatorFragment extends Fragment {
         new RequestTask(new RequestTask.OnTaskExecutedListener() {
             @Override
             public void onTaskExecuted(String result) {
+                ArrayList <Point> points = new ArrayList<>();
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(result);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        points.add(new Point(jsonObject.getInt("id"), jsonObject.getString("name")));
+                    }
+                    Log.d("points", points.toString());
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             }
         }).execute(request_address + "/points/all");
