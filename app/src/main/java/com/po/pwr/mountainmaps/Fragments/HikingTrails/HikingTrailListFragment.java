@@ -3,7 +3,12 @@ package com.po.pwr.mountainmaps.Fragments.HikingTrails;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Models.HikingTrail;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Adapters.HikingTrailListAdapter;
@@ -23,6 +29,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static android.content.Intent.EXTRA_TITLE;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
@@ -42,19 +49,16 @@ public class HikingTrailListFragment extends Fragment {
     public final static Integer id = 0;
     public String title;
 
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
     public HikingTrailListFragment() {
     }
 
-    public static HikingTrailListFragment newInstance(String param1, String param2) {
+    public static HikingTrailListFragment newInstance(String title) {
         HikingTrailListFragment fragment = new HikingTrailListFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(EXTRA_TITLE, title);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,20 +66,16 @@ public class HikingTrailListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_hikingtrail_list, container, false);
         title = getResources().getString(R.string.trips_drawer);
 
-        //HikingTrailTask task = (HikingTrailTask) new HikingTrailTask(getContext(), view).execute(request_address + "/hikers/" + hiker_id + "/hiking_trails");
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
         new RequestTask(new RequestTask.OnTaskExecutedListener() {
             @Override
@@ -109,12 +109,37 @@ public class HikingTrailListFragment extends Fragment {
                 mAdapter = new HikingTrailListAdapter(hikingTrails, new HikingTrailListAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v) {
-                        Toast.makeText(getContext(), "ELO", Toast.LENGTH_SHORT).show();
+                        Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.update_hikingtrail));
+
+                        FragmentTransaction transaction = null;
+                        if (getFragmentManager() != null) {
+                            transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.fragmentContainer, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
                     }
                 });
                 mRecyclerView.setAdapter(mAdapter);
             }
         }).execute(request_address + "/hikers/" + hiker_id + "/hiking_trails");
+
+
+        FloatingActionButton floatingButton = view.findViewById(R.id.newHikingTrailButton);
+        floatingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.new_hikingtrail));
+
+                FragmentTransaction transaction = null;
+                if (getFragmentManager() != null) {
+                    transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragmentContainer, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+            }
+        });
 
         return view;
     }

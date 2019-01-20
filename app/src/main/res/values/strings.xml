@@ -33,4 +33,7 @@
 
 
     <string name="hikerSelection">Wpisz ID Turysty</string>
+
+    <string name="new_hikingtrail">Utwórz trasę</string>
+    <string name="update_hikingtrail">Modyfikuj trasę</string>
 </resources>
