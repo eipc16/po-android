@@ -82,7 +82,7 @@
             <LinearLayout
                 android:id="@+id/listContainer"
                 android:layout_width="0dp"
-                android:layout_height="300dp"
+                android:layout_height="80pt"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:orientation="vertical"
