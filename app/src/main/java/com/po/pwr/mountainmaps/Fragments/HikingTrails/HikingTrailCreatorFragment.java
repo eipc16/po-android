@@ -14,13 +14,19 @@ import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Models.HikingTrail;
+import com.po.pwr.mountainmaps.Models.Point;
 import com.po.pwr.mountainmaps.R;
+import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
+
+import java.util.ArrayList;
 
 import static android.content.Intent.EXTRA_TITLE;
+import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailCreatorFragment extends Fragment {
 
     private HikingTrailCreatorViewModel mViewModel;
+    private final ArrayList<Point> pointList = new ArrayList<>();
 
     public final static Integer id = 3;
     public String title;
@@ -50,6 +56,26 @@ public class HikingTrailCreatorFragment extends Fragment {
             activity.curr_fragment = id;
             activity.getSupportActionBar().setTitle(title);
         }
+
+        new RequestTask(new RequestTask.OnTaskExecutedListener() {
+            @Override
+            public void onTaskExecuted(String result) {
+                Point p = null;
+                /*
+                    JSONArray json = new JSONArray(result);
+
+                    for (JSONObject e: json){
+                        p = new Point();
+                        p.setName(.......);
+                        
+                        pointList.add(p);
+
+                        // JAKOS TAK TO BEDZIE DZIALAC, wtedy bedziemy mieli arrayliste ze wszystkimi punktami
+                    }
+                 */
+            }
+        }).execute(request_address + "/points/all");
+
 
         return view;
     }
