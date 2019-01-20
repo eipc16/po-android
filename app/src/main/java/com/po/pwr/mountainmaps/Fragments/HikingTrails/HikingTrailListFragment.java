@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
@@ -109,7 +110,9 @@ public class HikingTrailListFragment extends Fragment {
                 mAdapter = new HikingTrailListAdapter(hikingTrails, new HikingTrailListAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v) {
-                        Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.update_hikingtrail));
+                        /* TO JESZCZE NIE DZIALA :(
+                        Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.update_hikingtrail), "ALA", "ma_kota", new ArrayList<Integer>());
+
 
                         FragmentTransaction transaction = null;
                         if (getFragmentManager() != null) {
@@ -118,6 +121,7 @@ public class HikingTrailListFragment extends Fragment {
                             transaction.addToBackStack(null);
                             transaction.commit();
                         }
+                        */
                     }
                 });
                 mRecyclerView.setAdapter(mAdapter);

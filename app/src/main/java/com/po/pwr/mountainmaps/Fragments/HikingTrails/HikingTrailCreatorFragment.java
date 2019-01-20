@@ -1,5 +1,6 @@
 package com.po.pwr.mountainmaps.Fragments.HikingTrails;
 
+import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -64,6 +65,17 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
         return fragment;
     }
 
+    public static HikingTrailCreatorFragment newInstance(String title, String name, String date, ArrayList<Integer> trailPointsIndexes) {
+        HikingTrailCreatorFragment fragment = new HikingTrailCreatorFragment();
+        Bundle bundle = new Bundle(4);
+        bundle.putString(EXTRA_TITLE, title);
+        bundle.putString("trailName", name);
+        bundle.putString("trailDate", date);
+        bundle.putIntegerArrayList("trailPoints", trailPointsIndexes);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -72,10 +84,25 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
         MainActivity activity = ((MainActivity) getActivity());
         title = getArguments().getString(EXTRA_TITLE);
 
+        String trailName = getArguments().getString("trailName");
+        String trailDate = getArguments().getString("trailDate");
+
+        if(trailName != null) {
+            TextView trailNameView = view.findViewById(R.id.hikingTrailName);
+            trailNameView.setText(trailName);
+        }
+
+        if(trailDate != null) {
+            TextView trailNameView = view.findViewById(R.id.hikingTrailDate);
+            trailNameView.setText(trailDate);
+        }
+
         final Button addButton = view.findViewById(R.id.addButton);
         final Button saveButton = view.findViewById(R.id.saveButton);
+        final Button infoButton = view.findViewById(R.id.infoButton);
         addButton.setOnClickListener(this);
         saveButton.setOnClickListener(this);
+        infoButton.setOnClickListener(this);
 
         if (activity != null) {
             activity.curr_fragment = id;
@@ -196,8 +223,44 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
             }).execute(request_address + "/hiking_trails/update/" + name + "/points?data=" + data);
 
 
+        } else if (id == R.id.infoButton) {
+            final TextView nameText = getView().findViewById(R.id.hikingTrailName);
+            final String name = nameText.getText().toString();
+            Log.d("infoBtn", name);
+            new RequestTask(new RequestTask.OnTaskExecutedListener() {
+                @Override
+                public void onTaskExecuted(String result) {
+                    try {
+                        JSONObject json = new JSONObject(result);
+
+                        Double distance = json.getDouble("dist") / 1000;
+                        Integer points = json.getInt("points");
+                        Double time = json.getDouble("time");
+
+                        Integer hours = (int) Math.floor(time);
+                        Integer minutes = (int) (60 * (time - Math.floor(time)));
+                        //Toast.makeText(getContext(), distance + " " + points + " " + time, Toast.LENGTH_SHORT).show();
+
+                        final Dialog dialog = new Dialog(getContext()); // Context, this, etc.
+                        dialog.setContentView(R.layout.details_dialog);
+
+                        TextView distView = dialog.findViewById(R.id.dialog_dist);
+                        distView.setText(getResources().getString(R.string.details_dist, distance));
+
+                        TextView pointsView = dialog.findViewById(R.id.dialog_points);
+                        pointsView.setText(getResources().getString(R.string.details_points, points));
+
+                        TextView timeView = dialog.findViewById(R.id.dialog_time);
+                        timeView.setText(getResources().getString(R.string.details_time, hours, minutes));
+
+                        dialog.setTitle("Informacje o trasie " + name);
+                        dialog.show();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).execute(request_address + "/hiking_trails/details/" + name);
         }
-
-
     }
 }

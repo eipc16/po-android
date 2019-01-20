@@ -44,4 +44,8 @@
     <string name="creator_reverse_button">Odwróć</string>
     <string name="creator_save_button">ZAPISZ</string>
 
+    <string name="details_title">Szczegóły trasy: %s</string>
+    <string name="details_dist">Dystans: %.2f km</string>
+    <string name="details_points">Punkty: %d</string>
+    <string name="details_time">Czas: %2d:%2d</string>
 </resources>
