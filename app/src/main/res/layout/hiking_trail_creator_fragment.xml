@@ -94,7 +94,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/hikingTrailDate">
 
-                <ListView
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/hikingTrailPointsListc"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
