@@ -1,16 +1,13 @@
 package com.po.pwr.mountainmaps.Utils.Adapters;
 
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextClock;
 import android.widget.TextView;
 
-import com.po.pwr.mountainmaps.Models.HikingTrail;
 import com.po.pwr.mountainmaps.Models.Point;
 import com.po.pwr.mountainmaps.R;
 
@@ -25,14 +22,14 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
     private final OnItemClickListener listener;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        public RelativeLayout layout;
+        public ConstraintLayout layout;
 
-        public MyViewHolder(@NonNull RelativeLayout layout) {
+        public MyViewHolder(@NonNull ConstraintLayout layout) {
             super(layout);
             this.layout = layout;
         }
 
-        public void bind(final RelativeLayout item, final OnItemClickListener listener) {
+        public void bind(final ConstraintLayout item, final OnItemClickListener listener) {
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -50,7 +47,7 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        RelativeLayout l = (RelativeLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.point, viewGroup, false);
+        ConstraintLayout l = (ConstraintLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.point, viewGroup, false);
         MyViewHolder viewHolder = new MyViewHolder(l);
         return viewHolder;
     }
