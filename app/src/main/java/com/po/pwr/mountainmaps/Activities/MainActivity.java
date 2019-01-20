@@ -12,13 +12,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.po.pwr.mountainmaps.Fragments.BadgeDisplayFragment;
-import com.po.pwr.mountainmaps.Fragments.HikerSelectionFragment;
-import com.po.pwr.mountainmaps.Fragments.HikingTrailListFragment;
+import com.po.pwr.mountainmaps.Fragments.Badge.BadgeDisplayFragment;
+import com.po.pwr.mountainmaps.Fragments.Settings.HikerSelectionFragment;
+import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailListFragment;
 import com.po.pwr.mountainmaps.R;
-import com.po.pwr.mountainmaps.Utils.DrawerNameTask;
+import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements BadgeDisplayFragment.OnFragmentInteractionListener, HikingTrailListFragment.OnFragmentInteractionListener {
 
@@ -62,7 +66,23 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
 
             @Override
             public void onDrawerOpened(@NonNull View view) {
-                DrawerNameTask task = (DrawerNameTask) new DrawerNameTask(getApplicationContext(), mDrawerLayout).execute(request_address + "/hikers/" + hiker_id + "/credentials");
+                //DrawerNameTask task = (DrawerNameTask) new DrawerNameTask(getApplicationContext(), mDrawerLayout).execute(request_address + "/hikers/" + hiker_id + "/credentials");
+                new RequestTask(new RequestTask.OnTaskExecutedListener() {
+                    @Override
+                    public void onTaskExecuted(String result) {
+                        NavigationView navigationView = findViewById(R.id.nav_view);
+                        View headerView = navigationView.getHeaderView(0);
+                        TextView navUser = headerView.findViewById(R.id.nav_title);
+
+                        try {
+                            JSONObject hikerCredentials = new JSONObject(result);
+                            String newUser = hikerCredentials.getString("first_name") + " " + hikerCredentials.getString("last_name");
+                            navUser.setText(newUser);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).execute(request_address + "/hikers/" + hiker_id + "/credentials");
             }
 
             @Override

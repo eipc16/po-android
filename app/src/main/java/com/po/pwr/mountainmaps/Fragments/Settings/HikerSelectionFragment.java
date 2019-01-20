@@ -1,4 +1,4 @@
-package com.po.pwr.mountainmaps.Fragments;
+package com.po.pwr.mountainmaps.Fragments.Settings;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.po.pwr.mountainmaps.Fragments.Badge.BadgeDetailFragment;
 import com.po.pwr.mountainmaps.R;
 
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
