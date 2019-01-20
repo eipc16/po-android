@@ -85,7 +85,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                     e.printStackTrace();
                 }
                 Log.d("points", points.toString());
-                recyclerView = view.findViewById(R.id.hikingTrailPointsListc);
+                recyclerView = view.findViewById(R.id.hikingTrailPointsList);
                 recyclerView.setHasFixedSize(true);
 
                 layoutManager = new LinearLayoutManager(getContext());
