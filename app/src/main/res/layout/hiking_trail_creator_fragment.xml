@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -58,7 +59,7 @@
                 android:layout_marginBottom="27dp"
                 android:text="@string/creator_date"
                 android:textSize="22sp"
-                app:layout_constraintBottom_toTopOf="@+id/hikingTrailPointsList"
+                app:layout_constraintBottom_toTopOf="@+id/listContainer"
                 app:layout_constraintEnd_toStartOf="@+id/hikingTrailDate"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -72,30 +73,32 @@
                 android:ems="10"
                 android:hint="RRRR-MM-DD"
                 android:inputType="date"
-                app:layout_constraintBottom_toTopOf="@+id/hikingTrailPointsList"
+                app:layout_constraintBottom_toTopOf="@+id/listContainer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/dateLabel"
                 app:layout_constraintTop_toBottomOf="@+id/hikingTrailName" />
 
             <LinearLayout
+                android:id="@+id/listContainer"
                 android:layout_width="395dp"
                 android:layout_height="300dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:orientation="vertical"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toTopOf="@+id/addButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/hikingTrailDate" >
+                app:layout_constraintTop_toBottomOf="@+id/hikingTrailDate">
+
                 <ListView
-                    android:nestedScrollingEnabled="true"
-                    android:id="@+id/hikingTrailPointsList"
+                    android:id="@+id/hikingTrailPointsListc"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="true" />
 
             </LinearLayout>
 
@@ -110,7 +113,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/hikingTrailPointsList" />
+                app:layout_constraintTop_toBottomOf="@+id/listContainer" />
 
             <Button
                 android:id="@+id/reverseButton"
@@ -122,7 +125,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/addButton"
-                app:layout_constraintTop_toBottomOf="@+id/hikingTrailPointsList" />
+                app:layout_constraintTop_toBottomOf="@+id/listContainer" />
 
             <Button
                 android:id="@+id/addButton"
@@ -134,7 +137,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/reverseButton"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/infoButton"
-                app:layout_constraintTop_toBottomOf="@+id/hikingTrailPointsList" />
+                app:layout_constraintTop_toBottomOf="@+id/listContainer" />
 
             <Button
                 android:id="@+id/saveButton"
