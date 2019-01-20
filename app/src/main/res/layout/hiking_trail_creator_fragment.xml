@@ -81,12 +81,10 @@
 
             <LinearLayout
                 android:id="@+id/listContainer"
-                android:layout_width="395dp"
+                android:layout_width="0dp"
                 android:layout_height="300dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toTopOf="@+id/addButton"
                 app:layout_constraintEnd_toEndOf="parent"
