@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
@@ -32,15 +34,17 @@ import java.util.LinkedList;
 import static android.content.Intent.EXTRA_TITLE;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
-public class HikingTrailCreatorFragment extends Fragment {
+public class HikingTrailCreatorFragment extends Fragment implements View.OnClickListener {
 
     private HikingTrailCreatorViewModel mViewModel;
 
     public final static Integer id = 3;
     public String title;
 
+    //title = (getResources().getString(R.string.new_hikingtrail));
+    ArrayList <Point> points = new ArrayList<>();
+
     public HikingTrailCreatorFragment() {
-        //title = (getResources().getString(R.string.new_hikingtrail));
     }
 
     public static HikingTrailCreatorFragment newInstance(String title) {
@@ -59,6 +63,9 @@ public class HikingTrailCreatorFragment extends Fragment {
         MainActivity activity = ((MainActivity) getActivity());
         title = getArguments().getString(EXTRA_TITLE);
 
+        final Button addButton = view.findViewById(R.id.addButton);
+        addButton.setOnClickListener(this);
+
         if(activity != null) {
             activity.curr_fragment = id;
             activity.getSupportActionBar().setTitle(title);
@@ -67,7 +74,7 @@ public class HikingTrailCreatorFragment extends Fragment {
         new RequestTask(new RequestTask.OnTaskExecutedListener() {
             @Override
             public void onTaskExecuted(String result) {
-                ArrayList <Point> points = new ArrayList<>();
+
 
                 RecyclerView recyclerView;
                 RecyclerView.Adapter adapter;
@@ -85,6 +92,8 @@ public class HikingTrailCreatorFragment extends Fragment {
                     e.printStackTrace();
                 }
                 Log.d("points", points.toString());
+
+                /*
                 recyclerView = view.findViewById(R.id.hikingTrailPointsList);
                 recyclerView.setHasFixedSize(true);
 
@@ -98,11 +107,11 @@ public class HikingTrailCreatorFragment extends Fragment {
                     }
                 });
                 recyclerView.setAdapter(adapter);
-
+*/
 
 
             }
-        }).execute(request_address + "/hiking_trails/get/1/points");
+        }).execute(request_address + "/points/all");
 
 
         return view;
@@ -115,4 +124,22 @@ public class HikingTrailCreatorFragment extends Fragment {
         // TODO: Use the ViewModel
     }
 
+    public void addPoint(View v) {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.addButton) {
+
+            PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+
+            for (Point p: points)
+                popupMenu.getMenu().add(p.getName());
+            popupMenu.show();
+        }
+
+
+    }
 }
