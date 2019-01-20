@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
     public int curr_fragment = 0;
 
     public static String hiker_id = "1";
-    public static String request_address = "http://192.168.1.16:8080";
+    public static String request_address = "http://10.0.2.2:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
