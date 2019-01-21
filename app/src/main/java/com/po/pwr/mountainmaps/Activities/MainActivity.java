@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
     public DrawerLayout mDrawerLayout;
     public int curr_fragment = 0;
 
-    public static String hiker_id = "1";
+    public static String hiker_id = "2";
     public static String request_address = "http://192.168.1.104:8080";
 
     @Override

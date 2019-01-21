@@ -32,4 +32,8 @@ public class Point {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    public boolean equals(Point p) {
+        return p.name.equals(this.name);
+    }
 }

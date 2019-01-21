@@ -50,6 +50,10 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
     //title = (getResources().getString(R.string.new_hikingtrail));
     ArrayList<Point> points = new ArrayList<>();
     ArrayList<Point> trailPoints = new ArrayList<>();
+
+    private String oldName = "";
+    private String oldDate = "";
+
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
@@ -65,13 +69,12 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
         return fragment;
     }
 
-    public static HikingTrailCreatorFragment newInstance(String title, String name, String date, ArrayList<Integer> trailPointsIndexes) {
+    public static HikingTrailCreatorFragment newInstance(String title, String name, String date) {
         HikingTrailCreatorFragment fragment = new HikingTrailCreatorFragment();
-        Bundle bundle = new Bundle(4);
+        Bundle bundle = new Bundle(3);
         bundle.putString(EXTRA_TITLE, title);
         bundle.putString("trailName", name);
         bundle.putString("trailDate", date);
-        bundle.putIntegerArrayList("trailPoints", trailPointsIndexes);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -89,11 +92,13 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
 
         if(trailName != null) {
             TextView trailNameView = view.findViewById(R.id.hikingTrailName);
+            oldName = trailName;
             trailNameView.setText(trailName);
         }
 
         if(trailDate != null) {
             TextView trailNameView = view.findViewById(R.id.hikingTrailDate);
+            oldDate = trailDate;
             trailNameView.setText(trailDate);
         }
 
@@ -136,8 +141,7 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
 
                 adapter = new PointListAdapter(trailPoints, new PointListAdapter.OnItemClickListener() {
                     @Override
-                    public void onItemClick(View v) {
-
+                    public void onItemClick(final View lv) {
                     }
                 });
                 recyclerView.setAdapter(adapter);
@@ -157,73 +161,105 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
         // TODO: Use the ViewModel
     }
 
-    public void addPoint(View v) {
+    public void trailCreate(View v) {
+        int id = v.getId();
+        final TextView nameText = getView().findViewById(R.id.hikingTrailName);
+        final TextView dateText = getView().findViewById(R.id.hikingTrailDate);
 
+
+        String name = nameText.getText().toString();
+        Log.d("name", name);
+        String date = dateText.getText().toString();
+
+        new RequestTask(new RequestTask.OnTaskExecutedListener() {
+            @Override
+            public void onTaskExecuted(String result) {
+
+            }
+        }).execute(request_address + "/hikers/" + hiker_id + "/add/hiking_trails?name=" + name);
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < trailPoints.size(); i++) {
+            Point p = trailPoints.get(i);
+            stringBuilder.append(p.getId());
+            if (i < trailPoints.size() - 1)
+                stringBuilder.append(',');
+        }
+
+        String data = stringBuilder.toString();
+
+        new RequestTask(new RequestTask.OnTaskExecutedListener() {
+            @Override
+            public void onTaskExecuted(String result) {
+                Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
+            }
+        }).execute(request_address + "/hiking_trails/update/" + name + "/points?data=" + data);
+    }
+
+    public void trailModify(View v) {
+        final TextView nameText = getView().findViewById(R.id.hikingTrailName);
+        final TextView dateText = getView().findViewById(R.id.hikingTrailDate);
+
+
+        final String name = nameText.getText().toString();
+        Log.d("name", name);
+        String date = dateText.getText().toString();
+
+        new RequestTask(new RequestTask.OnTaskExecutedListener() {
+            @Override
+            public void onTaskExecuted(String result) {
+                //zmieniono nazwe
+                if(result.equals("[]")){
+
+                    //nowa nazwa trasy
+                    if(!name.equals(oldName)) {
+                        //Usun trase o poprzedniej nazwie
+                        new RequestTask(new RequestTask.OnTaskExecutedListener() {
+                            @Override
+                            public void onTaskExecuted(String result) {
+                            }
+                        }).execute(request_address + "/hikers/" + hiker_id + "/delete/hiking_trails?name=" + oldName);
+
+                        //Dodaj trase o nowej nazwie
+                        new RequestTask(new RequestTask.OnTaskExecutedListener() {
+                            @Override
+                            public void onTaskExecuted(String result) {
+                            }
+                        }).execute(request_address + "/hikers/" + hiker_id + "/add/hiking_trails?name=" + name);
+                    }
+
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    for (int i = 0; i < trailPoints.size(); i++) {
+                        Point p = trailPoints.get(i);
+                        stringBuilder.append(p.getId());
+                        if (i < trailPoints.size() - 1)
+                            stringBuilder.append(',');
+                    }
+
+                    String data = stringBuilder.toString();
+
+                    new RequestTask(new RequestTask.OnTaskExecutedListener() {
+                        @Override
+                        public void onTaskExecuted(String result) {
+                            Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
+                        }
+                    }).execute(request_address + "/hiking_trails/update/" + name + "/points?data=" + data);
+
+                } else {
+                    //trasa o nowej nazwie juz istnieje
+                    Toast.makeText(getContext(), "Trasa o podanej nazwie juz istnieje!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).execute(request_address + "/hiking_trails/details/" + name);
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.addButton) {
-            PopupMenu popupMenu = new PopupMenu(getActivity(), v);
-            for (Point p : points)
-                popupMenu.getMenu().add(p.getName());
-            popupMenu.show();
 
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    Point point = null;
-                    for (Point p : points) {
-                        if (p.getName().contentEquals(item.getTitle())) {
-                            point = p;
-                            break;
-                        }
-                    }
-                    trailPoints.add(point);
-
-                    adapter.notifyDataSetChanged();
-
-                    return true;
-                }
-            });
-        } else if (id == R.id.saveButton) {
-
-            final TextView nameText = getView().findViewById(R.id.hikingTrailName);
-            final TextView dateText = getView().findViewById(R.id.hikingTrailDate);
-
-
-            String name = nameText.getText().toString();
-            Log.d("name", name);
-            String date = dateText.getText().toString();
-
-            new RequestTask(new RequestTask.OnTaskExecutedListener() {
-                @Override
-                public void onTaskExecuted(String result) {
-
-                }
-            }).execute(request_address + "/hikers/" + hiker_id + "/add/hiking_trails?name=" + name);
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for (int i = 0; i < trailPoints.size(); i++) {
-                Point p = trailPoints.get(i);
-                stringBuilder.append(p.getId());
-                if (i < trailPoints.size() - 1)
-                    stringBuilder.append(',');
-            }
-
-            String data = stringBuilder.toString();
-
-            new RequestTask(new RequestTask.OnTaskExecutedListener() {
-                @Override
-                public void onTaskExecuted(String result) {
-                    Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
-                }
-            }).execute(request_address + "/hiking_trails/update/" + name + "/points?data=" + data);
-
-
-        } else if (id == R.id.infoButton) {
+        if (id == R.id.infoButton) {
             final TextView nameText = getView().findViewById(R.id.hikingTrailName);
             final String name = nameText.getText().toString();
             Log.d("infoBtn", name);
@@ -261,6 +297,35 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
                     }
                 }
             }).execute(request_address + "/hiking_trails/details/" + name);
+        } else if (id == R.id.addButton) {
+            PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+            for (Point p : points)
+                popupMenu.getMenu().add(p.getName());
+            popupMenu.show();
+
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Point point = null;
+                    for (Point p : points) {
+                        if (p.getName().contentEquals(item.getTitle())) {
+                            point = p;
+                            break;
+                        }
+                    }
+                    trailPoints.add(point);
+
+                    adapter.notifyDataSetChanged();
+
+                    return true;
+                }
+            });
+        } else if (id == R.id.saveButton) {
+            if(!oldName.equals("") && !oldDate.equals("")) {
+                trailModify(v);
+            } else {
+                trailCreate(v);
+            }
         }
     }
 }

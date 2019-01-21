@@ -110,18 +110,20 @@ public class HikingTrailListFragment extends Fragment {
                 mAdapter = new HikingTrailListAdapter(hikingTrails, new HikingTrailListAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v) {
-                        /* TO JESZCZE NIE DZIALA :(
-                        Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.update_hikingtrail), "ALA", "ma_kota", new ArrayList<Integer>());
+//                        String name = ((TextView) v.findViewById(R.id.hikingtrailName)).getText().toString();
+//                        String date = ((TextView) v.findViewById(R.id.hikingTrailDate)).getText().toString();
+//
+//                        Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.update_hikingtrail), name, date);
+//
+//
+//                        FragmentTransaction transaction = null;
+//                        if (getFragmentManager() != null) {
+//                            transaction = getFragmentManager().beginTransaction();
+//                            transaction.replace(R.id.fragmentContainer, fragment);
+//                            transaction.addToBackStack(null);
+//                            transaction.commit();
+//                        }
 
-
-                        FragmentTransaction transaction = null;
-                        if (getFragmentManager() != null) {
-                            transaction = getFragmentManager().beginTransaction();
-                            transaction.replace(R.id.fragmentContainer, fragment);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
-                        }
-                        */
                     }
                 });
                 mRecyclerView.setAdapter(mAdapter);
