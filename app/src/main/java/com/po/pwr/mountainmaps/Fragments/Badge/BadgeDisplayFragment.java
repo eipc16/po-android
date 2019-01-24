@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Date;
 import java.util.ArrayList;
 
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
@@ -126,10 +127,10 @@ public class BadgeDisplayFragment extends Fragment {
                         for(int i = 0; i < json.length(); i++) {
                             JSONObject e = json.getJSONObject(i);
                             badgeList.add(new Badge(
-                                    Integer.parseInt(e.getString("id")),
+                                    e.getInt("id"),
                                     e.getString("display_name"),
                                     "badge_" + (Integer.parseInt(e.getString("id")) - 2),
-                                    e.getString("date")
+                                    (Date) e.get("date")
                             ));
                         }
                     } catch (JSONException e) {

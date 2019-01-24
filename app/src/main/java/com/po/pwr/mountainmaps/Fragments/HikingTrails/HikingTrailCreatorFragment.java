@@ -210,17 +210,18 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
             @Override
             public void onTaskExecuted(String result) {
                 //zmieniono nazwe
-                if(result.equals("[]")){
+                Log.d("result", result);
+                if(result.equals("{}") || name.equals(oldName)){
 
                     //nowa nazwa trasy
                     if(!name.equals(oldName)) {
-                        //Usun trase o poprzedniej nazwie
-                        new RequestTask(new RequestTask.OnTaskExecutedListener() {
-                            @Override
-                            public void onTaskExecuted(String result) {
-                            }
-                        }).execute(request_address + "/hikers/" + hiker_id + "/delete/hiking_trails?name=" + oldName);
-
+//                        //Usun trase o poprzedniej nazwie
+//                        new RequestTask(new RequestTask.OnTaskExecutedListener() {
+//                            @Override
+//                            public void onTaskExecuted(String result) {
+//                            }
+//                        }).execute(request_address + "/hikers/" + hiker_id + "/delete/hiking_trails?name=" + oldName);
+                        oldName = name;
                         //Dodaj trase o nowej nazwie
                         new RequestTask(new RequestTask.OnTaskExecutedListener() {
                             @Override
@@ -324,7 +325,7 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
             if(!oldName.equals("") && !oldDate.equals("")) {
                 trailModify(v);
             } else {
-                trailCreate(v);
+                trailModify(v);
             }
         }
     }

@@ -1,6 +1,8 @@
 package com.po.pwr.mountainmaps.Models;
 
-public class HikingTrail {
+import android.arch.lifecycle.ViewModel;
+
+public class HikingTrail extends ViewModel {
 
     public Integer id;
     public String name;

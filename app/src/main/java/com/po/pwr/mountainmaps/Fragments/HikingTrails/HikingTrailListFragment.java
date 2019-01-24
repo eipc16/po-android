@@ -35,14 +35,6 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HikingTrailListFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HikingTrailListFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HikingTrailListFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";

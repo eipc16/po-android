@@ -1,12 +1,26 @@
 package com.po.pwr.mountainmaps.Models;
 
-public class Point {
+import android.arch.lifecycle.ViewModel;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Point extends ViewModel {
+
+    @JsonProperty("id")
     private Integer id;
+
+    @JsonProperty("id")
     private String name;
 
     public Point(Integer id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Point() {
+
     }
 
     public Integer getId() {

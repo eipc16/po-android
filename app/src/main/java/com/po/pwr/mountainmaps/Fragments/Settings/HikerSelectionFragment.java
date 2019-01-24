@@ -40,7 +40,7 @@ public class HikerSelectionFragment extends Fragment {
         hikerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hiker_id = hikerId.getText().toString();
+                hiker_id = Integer.valueOf(hikerId.getText().toString());
             }
         });
 
@@ -51,7 +51,7 @@ public class HikerSelectionFragment extends Fragment {
             }
         });
 
-        hikerId.setText(hiker_id);
+        hikerId.setText(hiker_id.toString());
         ipAdress.setText(request_address);
 
         title = getResources().getString(R.string.settings_drawer);
