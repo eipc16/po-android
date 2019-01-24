@@ -5,21 +5,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
-import com.po.pwr.mountainmaps.Models.HikingTrail;
+import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Adapters.HikingTrailListAdapter;
 import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
@@ -77,13 +72,13 @@ public class HikingTrailListFragment extends Fragment {
                 RecyclerView.Adapter mAdapter;
                 RecyclerView.LayoutManager mLayoutManager;
 
-                ArrayList<HikingTrail> hikingTrails = new ArrayList<>();
+                ArrayList<HikingTrailViewModel> hikingTrails = new ArrayList<>();
                 JSONArray json = null;
                 try {
                     json = new JSONArray(result);
                     for(int i = 0; i < json.length(); i++) {
                         JSONObject e = json.getJSONObject(i);
-                        hikingTrails.add(new HikingTrail(
+                        hikingTrails.add(new HikingTrailViewModel(
                                 Integer.parseInt(e.getString("id")),
                                 e.getString("name"),
                                 e.getString("date").substring(0, 10)

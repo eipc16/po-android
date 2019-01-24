@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.po.pwr.mountainmaps.Models.Point;
+import com.po.pwr.mountainmaps.Models.PointViewModel;
 import com.po.pwr.mountainmaps.R;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
         void onItemClick(View v);
     }
 
-    private List<Point> points;
+    private List<PointViewModel> points;
     private final OnItemClickListener listener;
     private MyViewHolder viewHolder = null;
 
@@ -38,7 +38,7 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
 
     }
 
-    public PointListAdapter(List<Point> points, OnItemClickListener listener) {
+    public PointListAdapter(List<PointViewModel> points, OnItemClickListener listener) {
         this.points = points;
         this.listener = listener;
     }

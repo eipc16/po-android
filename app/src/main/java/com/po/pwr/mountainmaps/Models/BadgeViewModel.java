@@ -9,7 +9,7 @@ import java.sql.Date;
 import java.util.Locale;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Badge extends ViewModel {
+public class BadgeViewModel extends ViewModel {
 
     @JsonProperty("id")
     private Integer id;
@@ -23,11 +23,11 @@ public class Badge extends ViewModel {
     @JsonProperty("date")
     private Date date;
 
-    public Badge() {
+    public BadgeViewModel() {
 
     }
 
-    public Badge(Integer id, String display_name, String name, Date date) {
+    public BadgeViewModel(Integer id, String display_name, String name, Date date) {
         this.id = id;
         this.display_name = display_name;
         this.name = name;

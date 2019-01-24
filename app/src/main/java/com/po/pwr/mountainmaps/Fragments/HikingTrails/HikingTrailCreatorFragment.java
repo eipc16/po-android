@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,20 +19,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
-import com.po.pwr.mountainmaps.Models.HikingTrail;
-import com.po.pwr.mountainmaps.Models.Point;
+import com.po.pwr.mountainmaps.Models.PointViewModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Adapters.PointListAdapter;
 import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.Objects;
 
 import static android.content.Intent.EXTRA_TITLE;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
@@ -48,8 +42,8 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
     public String title;
 
     //title = (getResources().getString(R.string.new_hikingtrail));
-    ArrayList<Point> points = new ArrayList<>();
-    ArrayList<Point> trailPoints = new ArrayList<>();
+    ArrayList<PointViewModel> points = new ArrayList<>();
+    ArrayList<PointViewModel> trailPoints = new ArrayList<>();
 
     private String oldName = "";
     private String oldDate = "";
@@ -114,41 +108,19 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
             activity.getSupportActionBar().setTitle(title);
         }
 
-        new RequestTask(new RequestTask.OnTaskExecutedListener() {
+        recyclerView = view.findViewById(R.id.hikingTrailPointsList);
+        recyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+
+        trailPoints.addAll(((MainActivity) Objects.requireNonNull(getActivity())).pointSet);
+        adapter = new PointListAdapter(trailPoints, new PointListAdapter.OnItemClickListener() {
             @Override
-            public void onTaskExecuted(String result) {
-
-
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(result);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        points.add(new Point(jsonObject.getInt("id"), jsonObject.getString("name")));
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.d("points", points.toString());
-
-
-                recyclerView = view.findViewById(R.id.hikingTrailPointsList);
-                recyclerView.setHasFixedSize(true);
-
-                layoutManager = new LinearLayoutManager(getContext());
-                recyclerView.setLayoutManager(layoutManager);
-
-                adapter = new PointListAdapter(trailPoints, new PointListAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(final View lv) {
-                    }
-                });
-                recyclerView.setAdapter(adapter);
-
-
+            public void onItemClick(final View lv) {
             }
-        }).execute(request_address + "/points/all");
+        });
+        recyclerView.setAdapter(adapter);
 
 
         return view;
@@ -181,7 +153,7 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
         StringBuilder stringBuilder = new StringBuilder();
 
         for (int i = 0; i < trailPoints.size(); i++) {
-            Point p = trailPoints.get(i);
+            PointViewModel p = trailPoints.get(i);
             stringBuilder.append(p.getId());
             if (i < trailPoints.size() - 1)
                 stringBuilder.append(',');
@@ -233,7 +205,7 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
                     StringBuilder stringBuilder = new StringBuilder();
 
                     for (int i = 0; i < trailPoints.size(); i++) {
-                        Point p = trailPoints.get(i);
+                        PointViewModel p = trailPoints.get(i);
                         stringBuilder.append(p.getId());
                         if (i < trailPoints.size() - 1)
                             stringBuilder.append(',');
@@ -300,15 +272,15 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
             }).execute(request_address + "/hiking_trails/details/" + name);
         } else if (id == R.id.addButton) {
             PopupMenu popupMenu = new PopupMenu(getActivity(), v);
-            for (Point p : points)
+            for (PointViewModel p : points)
                 popupMenu.getMenu().add(p.getName());
             popupMenu.show();
 
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    Point point = null;
-                    for (Point p : points) {
+                    PointViewModel point = null;
+                    for (PointViewModel p : points) {
                         if (p.getName().contentEquals(item.getTitle())) {
                             point = p;
                             break;

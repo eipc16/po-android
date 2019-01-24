@@ -19,22 +19,20 @@ import android.widget.Toast;
 import com.po.pwr.mountainmaps.Fragments.Badge.BadgeDisplayFragment;
 import com.po.pwr.mountainmaps.Fragments.Settings.HikerSelectionFragment;
 import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailListFragment;
-import com.po.pwr.mountainmaps.Models.Badge;
-import com.po.pwr.mountainmaps.Models.Hiker;
+import com.po.pwr.mountainmaps.Models.HikerViewModel;
+import com.po.pwr.mountainmaps.Models.PointViewModel;
 import com.po.pwr.mountainmaps.R;
-import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements BadgeDisplayFragment.OnFragmentInteractionListener, HikingTrailListFragment.OnFragmentInteractionListener {
 
@@ -46,17 +44,24 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
 
     public RestTemplate restTemplate;
 
+    public final Set<PointViewModel> pointSet = new HashSet<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setRestTemplate();
+        loadPoints();
+
+        setUpStartView(savedInstanceState);
+    }
+
+    public void setUpStartView(Bundle savedInstanceState) {
+        final ActionBar actionBar = getSupportActionBar();
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        //setRestTemplate();
-
-        final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.menu_drawer);
@@ -148,23 +153,40 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
 
     }
 
-    public void loadHiker(final Integer hikerId) {
-        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<Hiker>() {
+    public void loadPoints() {
+        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<PointViewModel>>() {
             @Override
-            public ResponseEntity<Hiker> request(RestTemplate restTemplate, String url, HttpMethod method) {
-                return restTemplate.exchange(url, method, null, Hiker.class);
+            public ResponseEntity<List<PointViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<PointViewModel>>() {
+                });
             }
 
             @Override
-            public void onTaskExecuted(ResponseEntity<Hiker> result) {
-                Hiker hiker = result.getBody();
+            public void onTaskExecuted(ResponseEntity<List<PointViewModel>> result) {
+                pointSet.addAll(result.getBody());
+                Log.d("SET", pointSet.toString());
+            }
 
-                if(hiker != null) {
+        }).execute(request_address + "points/all");
+    }
+
+    public void loadHiker(final Integer hikerId) {
+        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<HikerViewModel>() {
+            @Override
+            public ResponseEntity<HikerViewModel> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                return restTemplate.exchange(url, method, null, HikerViewModel.class);
+            }
+
+            @Override
+            public void onTaskExecuted(ResponseEntity<HikerViewModel> result) {
+                HikerViewModel hikerViewModel = result.getBody();
+
+                if(hikerViewModel != null) {
                     NavigationView navigationView = findViewById(R.id.nav_view);
                     View headerView = navigationView.getHeaderView(0);
                     TextView navUser = headerView.findViewById(R.id.nav_title);
 
-                    navUser.setText(hiker.toString());
+                    navUser.setText(hikerViewModel.toString());
                 }
             }
         }).execute(request_address + "/hikers/" + hikerId + "/credentials/");

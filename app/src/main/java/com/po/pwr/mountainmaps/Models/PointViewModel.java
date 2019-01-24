@@ -6,20 +6,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Point extends ViewModel {
+public class PointViewModel extends ViewModel implements Comparable<PointViewModel> {
 
     @JsonProperty("id")
     private Integer id;
 
-    @JsonProperty("id")
+    @JsonProperty("name")
     private String name;
 
-    public Point(Integer id, String name) {
+    public PointViewModel(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Point() {
+    public PointViewModel() {
 
     }
 
@@ -41,13 +41,28 @@ public class Point extends ViewModel {
 
     @Override
     public String toString() {
-        return "Point{" +
+        return "PointViewModel{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
     }
 
-    public boolean equals(Point p) {
-        return p.name.equals(this.name);
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof PointViewModel))
+            return false;
+
+        PointViewModel other = (PointViewModel) o;
+        return this.id.equals(other.id);
+    }
+
+    @Override
+    public int compareTo(PointViewModel p) {
+        return Integer.compare(this.id, p.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

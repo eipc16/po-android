@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.po.pwr.mountainmaps.Models.HikingTrail;
+import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
 import com.po.pwr.mountainmaps.R;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         void onItemClick(View v);
     }
 
-    private List<HikingTrail> hikingTrails;
+    private List<HikingTrailViewModel> hikingTrails;
     private final OnItemClickListener listener;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -41,7 +41,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         }
     }
 
-    public HikingTrailListAdapter(List<HikingTrail> hikingTrails, OnItemClickListener listener) {
+    public HikingTrailListAdapter(List<HikingTrailViewModel> hikingTrails, OnItemClickListener listener) {
         this.hikingTrails = hikingTrails;
         this.listener = listener;
     }

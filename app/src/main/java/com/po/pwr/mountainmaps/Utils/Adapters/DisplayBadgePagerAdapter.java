@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.po.pwr.mountainmaps.Models.Badge;
+import com.po.pwr.mountainmaps.Models.BadgeViewModel;
 import com.po.pwr.mountainmaps.R;
 
 import java.util.List;
@@ -17,16 +17,16 @@ import java.util.List;
 public class DisplayBadgePagerAdapter extends PagerAdapter {
 
     private Context context;
-    private List<Badge> badges;
+    private List<BadgeViewModel> badges;
 
-    public DisplayBadgePagerAdapter(Context context, List<Badge> badges) {
+    public DisplayBadgePagerAdapter(Context context, List<BadgeViewModel> badges) {
         this.context = context;
         this.badges = badges;
     }
 
     @Override
     public Object instantiateItem(ViewGroup collection, int position) {
-        Badge badge = badges.get(position);
+        BadgeViewModel badge = badges.get(position);
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup layout = (ViewGroup) inflater.inflate(R.layout.badge_detail_fragment, collection, false);
 
