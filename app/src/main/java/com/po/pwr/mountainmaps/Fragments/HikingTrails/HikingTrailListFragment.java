@@ -124,18 +124,16 @@ public class HikingTrailListFragment extends Fragment {
                     public void onItemClick(View v, Integer trailId) {
                         HikingTrailViewModel hikingTrail = hikingTrailList.get(trailId);
 
-                        Toast.makeText(getContext(), hikingTrail.toString(), Toast.LENGTH_SHORT).show();
+                        Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.update_hikingtrail), hikingTrail);
 
-//                        Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.update_hikingtrail), name, date);
-//
-//
-//                        FragmentTransaction transaction = null;
-//                        if (getFragmentManager() != null) {
-//                            transaction = getFragmentManager().beginTransaction();
-//                            transaction.replace(R.id.fragmentContainer, fragment);
-//                            transaction.addToBackStack(null);
-//                            transaction.commit();
-//                        }
+                        FragmentTransaction transaction;
+                        if (getFragmentManager() != null) {
+                            transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.fragmentContainer, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
+
                     }
                 }));
 

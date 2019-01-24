@@ -28,9 +28,17 @@ public class HikingTrailCreatorFragment extends Fragment {
 
     public static HikingTrailCreatorFragment newInstance(String title, HikingTrailViewModel hikingTrail) {
         HikingTrailCreatorFragment fragment = new HikingTrailCreatorFragment();
-        Bundle bundle = new Bundle(1);
+        Bundle bundle = new Bundle(2);
         bundle.putString(EXTRA_TITLE, title);
         bundle.putSerializable("trail", hikingTrail);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    public static HikingTrailCreatorFragment newInstance(String title) {
+        HikingTrailCreatorFragment fragment = new HikingTrailCreatorFragment();
+        Bundle bundle = new Bundle(1);
+        bundle.putString(EXTRA_TITLE, title);
         fragment.setArguments(bundle);
         return fragment;
     }
