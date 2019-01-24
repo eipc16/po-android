@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -18,29 +19,49 @@ import android.widget.Toast;
 import com.po.pwr.mountainmaps.Fragments.Badge.BadgeDisplayFragment;
 import com.po.pwr.mountainmaps.Fragments.Settings.HikerSelectionFragment;
 import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailListFragment;
+import com.po.pwr.mountainmaps.Models.HikerViewModel;
+import com.po.pwr.mountainmaps.Models.PointViewModel;
 import com.po.pwr.mountainmaps.R;
-import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
+import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
-public class MainActivity extends AppCompatActivity implements BadgeDisplayFragment.OnFragmentInteractionListener, HikingTrailListFragment.OnFragmentInteractionListener {
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class MainActivity extends AppCompatActivity {
 
     public DrawerLayout mDrawerLayout;
     public int curr_fragment = 0;
 
-    public static String hiker_id = "1";
-    public static String request_address = "http://10.0.2.2:8080";
+    public static Integer hiker_id = 2;
+    public static String request_address = "http://192.168.1.104:8080";
+
+    public RestTemplate restTemplate;
+
+    public final Set<PointViewModel> pointSet = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setRestTemplate();
+        loadPoints();
+
+        setUpStartView(savedInstanceState);
+    }
+
+    public void setUpStartView(Bundle savedInstanceState) {
+        final ActionBar actionBar = getSupportActionBar();
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.menu_drawer);
@@ -68,23 +89,7 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
 
             @Override
             public void onDrawerOpened(@NonNull View view) {
-                //DrawerNameTask task = (DrawerNameTask) new DrawerNameTask(getApplicationContext(), mDrawerLayout).execute(request_address + "/hikers/" + hiker_id + "/credentials");
-                new RequestTask(new RequestTask.OnTaskExecutedListener() {
-                    @Override
-                    public void onTaskExecuted(String result) {
-                        NavigationView navigationView = findViewById(R.id.nav_view);
-                        View headerView = navigationView.getHeaderView(0);
-                        TextView navUser = headerView.findViewById(R.id.nav_title);
-
-                        try {
-                            JSONObject hikerCredentials = new JSONObject(result);
-                            String newUser = hikerCredentials.getString("first_name") + " " + hikerCredentials.getString("last_name");
-                            navUser.setText(newUser);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).execute(request_address + "/hikers/" + hiker_id + "/credentials");
+                loadHiker(hiker_id);
             }
 
             @Override
@@ -142,6 +147,51 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
         });
     }
 
+    public void setRestTemplate() {
+        restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+
+    }
+
+    public void loadPoints() {
+        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<PointViewModel>>() {
+            @Override
+            public ResponseEntity<List<PointViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<PointViewModel>>() {
+                });
+            }
+
+            @Override
+            public void onTaskExecuted(ResponseEntity<List<PointViewModel>> result) {
+                pointSet.addAll(result.getBody());
+                Log.d("SET", pointSet.toString());
+            }
+
+        }).execute(request_address + "points/all");
+    }
+
+    public void loadHiker(final Integer hikerId) {
+        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<HikerViewModel>() {
+            @Override
+            public ResponseEntity<HikerViewModel> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                return restTemplate.exchange(url, method, null, HikerViewModel.class);
+            }
+
+            @Override
+            public void onTaskExecuted(ResponseEntity<HikerViewModel> result) {
+                HikerViewModel hikerViewModel = result.getBody();
+
+                if(hikerViewModel != null) {
+                    NavigationView navigationView = findViewById(R.id.nav_view);
+                    View headerView = navigationView.getHeaderView(0);
+                    TextView navUser = headerView.findViewById(R.id.nav_title);
+
+                    navUser.setText(hikerViewModel.toString());
+                }
+            }
+        }).execute(request_address + "/hikers/" + hikerId + "/credentials/");
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -150,10 +200,5 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 }

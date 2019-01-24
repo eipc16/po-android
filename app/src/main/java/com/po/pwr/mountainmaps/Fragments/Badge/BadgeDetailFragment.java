@@ -9,12 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.po.pwr.mountainmaps.Models.Badge;
+import com.po.pwr.mountainmaps.Models.BadgeViewModel;
 import com.po.pwr.mountainmaps.R;
 
 public class BadgeDetailFragment extends Fragment {
 
-    private Badge mViewModel;
+    private BadgeViewModel mViewModel;
 
     public static BadgeDetailFragment newInstance() {
         return new BadgeDetailFragment();
@@ -29,7 +29,7 @@ public class BadgeDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(Badge.class);
+        mViewModel = ViewModelProviders.of(this).get(BadgeViewModel.class);
     }
 
 }
