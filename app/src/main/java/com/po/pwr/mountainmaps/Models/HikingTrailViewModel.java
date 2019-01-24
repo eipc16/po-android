@@ -5,22 +5,23 @@ import android.arch.lifecycle.ViewModel;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HikingTrailViewModel extends ViewModel {
+public class HikingTrailViewModel extends ViewModel implements Serializable {
 
     @JsonProperty("id")
-    public Integer id;
+    private Integer id;
 
     @JsonProperty("name")
-    public String name;
+    private String name;
 
     @JsonProperty("date")
-    public Date date;
+    private Date date;
 
     @JsonProperty("finished")
-    public Boolean finished;
+    private Boolean finished;
 
     public HikingTrailViewModel(Integer id, String name, Date date, Boolean finished) {
         this.id = id;
@@ -31,6 +32,22 @@ public class HikingTrailViewModel extends ViewModel {
 
     public HikingTrailViewModel() {
 
+    }
+
+    public Integer getId() {
+        return this.id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public Date getDate() {
+        return this.date;
+    }
+
+    public Boolean isFinished() {
+        return this.finished;
     }
 
     @Override

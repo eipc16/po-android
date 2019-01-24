@@ -58,9 +58,9 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         TextView name = myViewHolder.layout.findViewById(R.id.hikingtrailName);
-        name.setText(hikingTrails.get(i).name);
+        name.setText(hikingTrails.get(i).getName());
         TextView date = myViewHolder.layout.findViewById(R.id.hikingTrailDate);
-        date.setText(hikingTrails.get(i).date.toString());
+        date.setText(hikingTrails.get(i).getDate().toString());
 
         myViewHolder.bind(myViewHolder.layout, listener);
     }
