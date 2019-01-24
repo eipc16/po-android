@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements BadgeDisplayFragment.OnFragmentInteractionListener, HikingTrailListFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
     public DrawerLayout mDrawerLayout;
     public int curr_fragment = 0;
@@ -200,10 +200,5 @@ public class MainActivity extends AppCompatActivity implements BadgeDisplayFragm
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 }

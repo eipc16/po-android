@@ -44,10 +44,6 @@ public class BadgeDisplayFragment extends Fragment {
     public final static Integer id = 2;
     public String title;
 
-    private OnFragmentInteractionListener mListener;
-
-    private final List<BadgeViewModel> badgeList = new ArrayList<>();
-
     public BadgeDisplayFragment() {
     }
 
@@ -60,11 +56,6 @@ public class BadgeDisplayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_badge_display, container, false);
-
-        final TextView nextBadgeName = view.findViewById(R.id.badge_next);
-        final TextView currentPoints = view.findViewById(R.id.badge_points);
-        final TextView requiredPoints = view.findViewById(R.id.badge_req_points);
-        final TextView missingPoints = view.findViewById(R.id.badge_diff);
 
         loadNextBadgeData(view);
         loadUserBadges(view);
@@ -132,22 +123,11 @@ public class BadgeDisplayFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

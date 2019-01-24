@@ -36,8 +36,6 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailCreatorFragment extends Fragment implements View.OnClickListener {
 
-    private HikingTrailCreatorViewModel mViewModel;
-
     public final static Integer id = 3;
     public String title;
 
@@ -129,7 +127,6 @@ public class HikingTrailCreatorFragment extends Fragment implements View.OnClick
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(HikingTrailCreatorViewModel.class);
         // TODO: Use the ViewModel
     }
 

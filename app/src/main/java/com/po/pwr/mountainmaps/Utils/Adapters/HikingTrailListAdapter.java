@@ -16,7 +16,7 @@ import java.util.List;
 public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailListAdapter.MyViewHolder> {
 
     public interface OnItemClickListener {
-        void onItemClick(View v);
+        void onItemClick(View v, Integer trailId);
     }
 
     private List<HikingTrailViewModel> hikingTrails;
@@ -35,7 +35,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(v);
+                    listener.onItemClick(v, getAdapterPosition());
                 }
             });
         }
@@ -60,7 +60,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         TextView name = myViewHolder.layout.findViewById(R.id.hikingtrailName);
         name.setText(hikingTrails.get(i).name);
         TextView date = myViewHolder.layout.findViewById(R.id.hikingTrailDate);
-        date.setText(hikingTrails.get(i).date);
+        date.setText(hikingTrails.get(i).date.toString());
 
         myViewHolder.bind(myViewHolder.layout, listener);
     }
