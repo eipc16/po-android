@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailCreatorFragment;
-import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailListFragment;
 import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Listeners.OnTrailClickListener;
@@ -99,9 +98,10 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         String startPointName = context.getResources().getString(R.string.track_list_unkown);
         String endPointName = context.getResources().getString(R.string.track_list_unkown);
 
-        if(hikingTrail.getPoints().size() > 1)
+        if(hikingTrail.getPoints().size() > 1) {
             startPointName = MainActivity.pointSet.get(hikingTrail.getPoints().get(0)).getName();
             endPointName = MainActivity.pointSet.get(hikingTrail.getPoints().get(hikingTrails.get(i).getPoints().size() - 1)).getName();
+        }
 
         if(!hikingTrail.isFinished())
             statusImage.setVisibility(View.INVISIBLE);
