@@ -18,7 +18,7 @@ import java.util.List;
 public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyViewHolder> implements View.OnClickListener {
 
     public interface OnItemClickListener {
-        void onItemClick(View v);
+        void onItemClick(View v, Integer position);
     }
 
     private List<PointViewModel> points;

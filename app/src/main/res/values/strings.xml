@@ -48,4 +48,9 @@
     <string name="details_dist">Dystans: %.2f km</string>
     <string name="details_points">Punkty: %d</string>
     <string name="details_time">Czas: %2d:%2d</string>
+
+    <string name="track_list_name">Nazwa trasy</string>
+    <string name="track_list_date">Planowana data</string>
+    <string name="track_list_begin_end">%s ---> %s</string>
+    <string name="track_list_unkown">Nieznana</string>
 </resources>

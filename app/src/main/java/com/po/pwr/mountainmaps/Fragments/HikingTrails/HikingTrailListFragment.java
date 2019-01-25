@@ -110,7 +110,7 @@ public class HikingTrailListFragment extends Fragment {
                 final List<HikingTrailViewModel> hikingTrailList = new ArrayList<>();
                 hikingTrailList.addAll(hikingTrails);
 
-                RecyclerView mRecyclerView;
+                final RecyclerView mRecyclerView;
                 RecyclerView.LayoutManager mLayoutManager;
 
                 mRecyclerView = view.findViewById(R.id.listContainer);
@@ -119,23 +119,7 @@ public class HikingTrailListFragment extends Fragment {
                 mLayoutManager = new LinearLayoutManager(getContext());
                 mRecyclerView.setLayoutManager(mLayoutManager);
 
-                mRecyclerView.setAdapter(new HikingTrailListAdapter(hikingTrailList, new HikingTrailListAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View v, Integer trailId) {
-                        HikingTrailViewModel hikingTrail = hikingTrailList.get(trailId);
-
-                        Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.update_hikingtrail), hikingTrail);
-
-                        FragmentTransaction transaction;
-                        if (getFragmentManager() != null) {
-                            transaction = getFragmentManager().beginTransaction();
-                            transaction.replace(R.id.fragmentContainer, fragment);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
-                        }
-
-                    }
-                }));
+                mRecyclerView.setAdapter(new HikingTrailListAdapter(hikingTrailList, getContext(), getFragmentManager()));
 
             }
 
