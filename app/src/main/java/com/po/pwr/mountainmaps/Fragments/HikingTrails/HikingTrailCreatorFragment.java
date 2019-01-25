@@ -158,17 +158,18 @@ public class HikingTrailCreatorFragment extends Fragment {
     }
 
     public void setUpSaveButton(final View view) {
+        final EditText trailName = view.findViewById(R.id.hikingTrailName);
+        final EditText trailDate = view.findViewById(R.id.hikingTrailDate);
+
         Button saveButton = view.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String requestString = request_address;
                 if(hikingTrail == null) { /*dodanie nowej trasy*/
-                    EditText trailName = view.findViewById(R.id.hikingTrailName);
-                    EditText trailDate = view.findViewById(R.id.hikingTrailDate);
 
                     requestString += "hikers/" + hiker_id
-                            + "/hiking_trails/add?trail_name=" + trailName.getText().toString()
+                            + "/hiking_trails/add?trail_name=" + trailName.getText().toString().replace(" ", "%20")
                             + "&trail_date=" + parseDate(trailDate.getText().toString())
                             + "&trail_points=";
 
@@ -182,8 +183,8 @@ public class HikingTrailCreatorFragment extends Fragment {
                     Log.d("punkty_c", requestString);
                 } else { /*modyfikacja istniejacej trasy*/
                     requestString += "hiking_trails/" + hikingTrail.getId()
-                            + "/update?name=" + hikingTrail.getName()
-                            + "&date=" + hikingTrail.getDate()
+                            + "/update?name=" + trailName.getText().toString().replace(" ", "%20")
+                            + "&date=" + trailDate.getText().toString()
                             + "&pointList=";
 
                     for (int i = 0; i < currentTrailPoints.size(); i++) {
