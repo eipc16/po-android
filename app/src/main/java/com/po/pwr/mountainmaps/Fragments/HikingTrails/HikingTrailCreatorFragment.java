@@ -35,7 +35,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.SearchResultListener;
+import ir.mirrajabi.searchdialog.core.Searchable;
 
 import static android.content.Intent.EXTRA_TITLE;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
@@ -140,11 +147,56 @@ public class HikingTrailCreatorFragment extends Fragment {
     }
 
     public void setUpAddButton(final View view) {
-
+        Button addButton = view.findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createSearchDialog();
+            }
+        });
     }
 
     public void setUpSaveButton(final View view) {
+        //createSearchDialog();
+    }
 
+    public void createSearchDialog() {
+        final PointViewModel result = new PointViewModel();
+
+        new SimpleSearchDialogCompat<>(getContext(), getResources().getString(R.string.search_dialog_title),
+                "Podaj nazwę odcinka", null, initSearchData(), new SearchResultListener<Searchable>() {
+            @Override
+            public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
+                for(Map.Entry<Integer, PointViewModel> entry : MainActivity.pointSet.entrySet()) {
+                    if(entry.getValue().getName().equals(searchable.getTitle())) {
+                        Log.d("model " + entry.getValue().getId(), entry.getValue().toString());
+                        result.setId(entry.getValue().getId());
+                        result.setName(entry.getValue().getName());
+
+                    }
+                }
+
+                if(result.getName() != null) {
+                    currentTrailPoints.add(result);
+                    updatePointList(getView(), currentTrailPoints);
+                } else {
+                    Toast.makeText(getContext(), "Podany odcinek nie istnieje!", Toast.LENGTH_SHORT).show();
+                }
+                baseSearchDialogCompat.dismiss();
+            }
+        }).show();
+    }
+
+    public ArrayList<Searchable> initSearchData() {
+        ArrayList<Searchable> searchList = new ArrayList<>();
+
+        for(Map.Entry<Integer, PointViewModel> entry : MainActivity.pointSet.entrySet()) {
+            if(currentTrailPoints.isEmpty() || !entry.getValue().sameName(currentTrailPoints.get(currentTrailPoints.size() - 1))) {
+                searchList.add(entry.getValue());
+            }
+        }
+
+        return searchList;
     }
 
     public void updateData(final View view) {
@@ -168,7 +220,6 @@ public class HikingTrailCreatorFragment extends Fragment {
                 currentTrailPoints.add(allPoints.get(i));
         }
     }
-
     public void updatePointList(View view, List<PointViewModel> newPointList) {
         RecyclerView mRecyclerView;
         RecyclerView.LayoutManager mLayoutManager;
@@ -194,7 +245,7 @@ public class HikingTrailCreatorFragment extends Fragment {
         Integer minutes = (int) (60 * (time - Math.floor(time)));
 
         String result = "";
-        result += getResources().getString(R.string.details_title, editName.toString()) + "\n";
+        result += getResources().getString(R.string.details_title, editName.getText().toString()) + "\n";
         result += getResources().getString(R.string.details_dist, distance) + "\n";
         result += getResources().getString(R.string.details_points, points) + "\n";
         result += getResources().getString(R.string.details_time, hours,  minutes);

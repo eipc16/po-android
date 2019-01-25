@@ -5,8 +5,10 @@ import android.arch.lifecycle.ViewModel;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import ir.mirrajabi.searchdialog.core.Searchable;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PointViewModel extends ViewModel implements Comparable<PointViewModel> {
+public class PointViewModel extends ViewModel implements Comparable<PointViewModel>, Searchable {
 
     @JsonProperty("id")
     private Integer id;
@@ -22,6 +24,7 @@ public class PointViewModel extends ViewModel implements Comparable<PointViewMod
     public PointViewModel() {
 
     }
+
 
     public Integer getId() {
         return id;
@@ -64,5 +67,14 @@ public class PointViewModel extends ViewModel implements Comparable<PointViewMod
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public String getTitle() {
+        return this.getName();
+    }
+
+    public boolean sameName(PointViewModel p) {
+        return this.name.equals(p.name);
     }
 }
