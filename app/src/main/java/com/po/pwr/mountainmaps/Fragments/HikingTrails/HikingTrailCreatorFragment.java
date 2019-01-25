@@ -81,16 +81,16 @@ public class HikingTrailCreatorFragment extends Fragment {
         updateData(view);
         updatePointList(view, currentTrailPoints);
 
-        setUpReverseButton();
-        setUpInfoButton();
-        setUpAddButton();
-        setUpSaveButton();
+        setUpReverseButton(view);
+        setUpInfoButton(view);
+        setUpAddButton(view);
+        setUpSaveButton(view);
 
         return view;
     }
 
-    public void setUpReverseButton() {
-        Button reverseButton = getView().findViewById(R.id.reverseButton);
+    public void setUpReverseButton(final View view) {
+        Button reverseButton = view.findViewById(R.id.reverseButton);
         reverseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,8 +102,8 @@ public class HikingTrailCreatorFragment extends Fragment {
         });
     }
 
-    public void setUpInfoButton() {
-        Button infoButton = getView().findViewById(R.id.infoButton);
+    public void setUpInfoButton(final View view) {
+        Button infoButton = view.findViewById(R.id.infoButton);
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,11 +139,11 @@ public class HikingTrailCreatorFragment extends Fragment {
         });
     }
 
-    public void setUpAddButton() {
+    public void setUpAddButton(final View view) {
 
     }
 
-    public void setUpSaveButton() {
+    public void setUpSaveButton(final View view) {
 
     }
 
