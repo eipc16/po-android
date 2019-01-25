@@ -1,6 +1,8 @@
 package com.po.pwr.mountainmaps.Utils.Adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -15,13 +17,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailCreatorFragment;
+import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailListFragment;
 import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Listeners.OnTrailClickListener;
+import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
+
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+
+import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
+import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailListAdapter.MyViewHolder> implements OnTrailClickListener {
 
@@ -111,32 +123,70 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         Log.d("New array size: ", Integer.valueOf(hikingTrails.size()).toString());
     }
 
+    private AlertDialog createDialog(final Integer position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(R.string.track_list_dialog_remove)
+                .setPositiveButton(R.string.track_list_dialog_agree, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Log.d("POSITION", position.toString());
+
+                        new SpringRequestTask<JsonNode>(HttpMethod.POST, new SpringRequestTask.OnSpringTaskListener<JsonNode>() {
+                            @Override
+                            public ResponseEntity<JsonNode> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                                return restTemplate.exchange(url, method, null, JsonNode.class);
+                            }
+
+                            @Override
+                            public void onTaskExecuted(ResponseEntity<JsonNode> result) {
+                                JsonNode response = result.getBody();
+                                Log.d("RESPONSE", response.toString());
+                                if(response.toString().equals("deleted")) {
+                                    Toast.makeText(context, "Trasa została usunięta!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                        }).execute(request_address + "/hikers/" + hiker_id + "/hiking_trails/delete?trail_id=" + hikingTrails.get(position).getId());
+                        removeElement(position);
+                    }
+                })
+                .setNegativeButton(R.string.track_list_dialog_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+
+        return builder.create();
+    }
+
     @Override
     public int getItemCount() {
         return hikingTrails.size();
     }
 
     @Override
-    public void onItemClick(View v, Integer trailId) {
-        HikingTrailViewModel hikingTrail = hikingTrails.get(trailId);
+    public void onItemClick(View v, Integer position) {
+        HikingTrailViewModel hikingTrail = hikingTrails.get(position);
 
-        Fragment fragment = HikingTrailCreatorFragment.newInstance(context.getResources().getString(R.string.update_hikingtrail), hikingTrail);
+        if(!hikingTrails.get(position).isFinished()) {
+            Fragment fragment = HikingTrailCreatorFragment.newInstance(context.getResources().getString(R.string.update_hikingtrail), hikingTrail);
 
-        FragmentTransaction transaction;
-        if (fragmentManager != null) {
-            transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.fragmentContainer, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            FragmentTransaction transaction;
+            if (fragmentManager != null) {
+                transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.fragmentContainer, fragment, "trailCreator");
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
         }
     }
 
     @Override
-    public boolean onLongLick(View v, Integer trailId) {
-        if(hikingTrails.get(trailId).isFinished())
+    public boolean onLongLick(View v, Integer position) {
+        if(hikingTrails.get(position).isFinished())
             return false;
 
-        Toast.makeText(context, "removing", Toast.LENGTH_SHORT).show();
+        AlertDialog removeDialog = createDialog(position);
+        removeDialog.show();
 
         return true;
     }

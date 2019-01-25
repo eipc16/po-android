@@ -74,8 +74,6 @@ public class HikingTrailListFragment extends Fragment {
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
-        loadUserHikingTrails(view);
-
         FloatingActionButton floatingButton = view.findViewById(R.id.newHikingTrailButton);
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,29 +104,40 @@ public class HikingTrailListFragment extends Fragment {
             @Override
             public void onTaskExecuted(ResponseEntity<List<HikingTrailViewModel>> result) {
                 hikingTrails.addAll(result.getBody());
-
-                final List<HikingTrailViewModel> hikingTrailList = new ArrayList<>();
-                hikingTrailList.addAll(hikingTrails);
-
-                final RecyclerView mRecyclerView;
-                RecyclerView.LayoutManager mLayoutManager;
-
-                mRecyclerView = view.findViewById(R.id.listContainer);
-                mRecyclerView.setHasFixedSize(true);
-
-                mLayoutManager = new LinearLayoutManager(getContext());
-                mRecyclerView.setLayoutManager(mLayoutManager);
-
-                mRecyclerView.setAdapter(new HikingTrailListAdapter(hikingTrailList, getContext(), getFragmentManager()));
-
+                updateAdapter(view);
             }
 
         }).execute(request_address + "/hikers/" + hiker_id + "/hiking_trails");
     }
 
+    private void updateAdapter(View view) {
+        final List<HikingTrailViewModel> hikingTrailList = new ArrayList<>();
+        hikingTrailList.addAll(hikingTrails);
+
+        final RecyclerView mRecyclerView;
+        RecyclerView.LayoutManager mLayoutManager;
+
+        mRecyclerView = view.findViewById(R.id.listContainer);
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.setAdapter(new HikingTrailListAdapter(hikingTrailList, getContext(), getFragmentManager()));
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        hikingTrails.clear();
+        loadUserHikingTrails(getView());
+        updateAdapter(getView());
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
     }
 
     @Override

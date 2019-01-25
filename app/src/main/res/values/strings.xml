@@ -53,4 +53,8 @@
     <string name="track_list_date">Planowana data</string>
     <string name="track_list_begin_end">%s ---> %s</string>
     <string name="track_list_unkown">Nieznana</string>
+
+    <string name="track_list_dialog_remove">Czy jesteś pewien, że chcesz usunąć trasę? Ta operacja jest nieodwracalna</string>
+    <string name="track_list_dialog_agree">Zatwierdź</string>
+    <string name="track_list_dialog_cancel">Odrzuć</string>
 </resources>
