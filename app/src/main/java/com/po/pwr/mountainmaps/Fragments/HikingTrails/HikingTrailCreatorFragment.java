@@ -1,5 +1,7 @@
 package com.po.pwr.mountainmaps.Fragments.HikingTrails;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,22 +14,32 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
 import com.po.pwr.mountainmaps.Models.PointViewModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Adapters.HikingTrailListAdapter;
 import com.po.pwr.mountainmaps.Utils.Adapters.PointListAdapter;
+import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
+
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import static android.content.Intent.EXTRA_TITLE;
+import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
+import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailCreatorFragment extends Fragment {
 
@@ -36,7 +48,7 @@ public class HikingTrailCreatorFragment extends Fragment {
     public String title;
 
     private HikingTrailViewModel hikingTrail;
-    private List<PointViewModel> currentTrailPoints;
+    private final List<PointViewModel> currentTrailPoints = new ArrayList<>();
 
     public HikingTrailCreatorFragment() {
     }
@@ -63,12 +75,80 @@ public class HikingTrailCreatorFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.hiking_trail_creator_fragment, container, false);
 
-        MainActivity activity = ((MainActivity) getActivity());
-
-        currentTrailPoints = new ArrayList<>();
-
         title = getArguments().getString(EXTRA_TITLE);
         hikingTrail = (HikingTrailViewModel) getArguments().getSerializable("trail");
+
+        updateData(view);
+        updatePointList(view, currentTrailPoints);
+
+        setUpReverseButton();
+        setUpInfoButton();
+        setUpAddButton();
+        setUpSaveButton();
+
+        return view;
+    }
+
+    public void setUpReverseButton() {
+        Button reverseButton = getView().findViewById(R.id.reverseButton);
+        reverseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentTrailPoints.size() > 1) {
+                    Collections.reverse(currentTrailPoints);
+                    updatePointList(getView(), currentTrailPoints);
+                }
+            }
+        });
+    }
+
+    public void setUpInfoButton() {
+        Button infoButton = getView().findViewById(R.id.infoButton);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentTrailPoints.size() > 1) {
+                    String infoRequest = request_address + "/points/details?points=";
+
+                    for (int i = 0; i < currentTrailPoints.size(); i++) {
+                        infoRequest += currentTrailPoints.get(i).getId();
+
+                        if (i < currentTrailPoints.size() - 1)
+                            infoRequest += ",";
+                    }
+
+                    Log.d("info_request", infoRequest);
+
+                    new SpringRequestTask<JsonNode>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<JsonNode>() {
+                        @Override
+                        public ResponseEntity<JsonNode> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                            return restTemplate.exchange(url, method, null, JsonNode.class);
+                        }
+
+                        @Override
+                        public void onTaskExecuted(ResponseEntity<JsonNode> result) {
+                            JsonNode response = result.getBody();
+                            String info = prepareDialogData(response);
+                            showInfoDialog(info);
+                        }
+                    }).execute(infoRequest);
+                } else {
+                    Toast.makeText(getContext(), "Podana trasa nie jest prawidłowa", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    public void setUpAddButton() {
+
+    }
+
+    public void setUpSaveButton() {
+
+    }
+
+    public void updateData(final View view) {
+        MainActivity activity = ((MainActivity) getActivity());
 
         if(activity != null) {
             activity.curr_fragment = id;
@@ -87,13 +167,9 @@ public class HikingTrailCreatorFragment extends Fragment {
             for (Integer i : hikingTrail.getPoints())
                 currentTrailPoints.add(allPoints.get(i));
         }
-
-        setUpPointList(view);
-
-        return view;
     }
 
-    public void setUpPointList(View view) {
+    public void updatePointList(View view, List<PointViewModel> newPointList) {
         RecyclerView mRecyclerView;
         RecyclerView.LayoutManager mLayoutManager;
 
@@ -102,13 +178,36 @@ public class HikingTrailCreatorFragment extends Fragment {
 
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        
+        PointListAdapter mRecyclerAdapter = new PointListAdapter(newPointList);
+        mRecyclerView.setAdapter(mRecyclerAdapter);
+    }
 
-        mRecyclerView.setAdapter(new PointListAdapter(currentTrailPoints, new PointListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, Integer position) {
-                Toast.makeText(getContext(), position, Toast.LENGTH_SHORT).show();
-            }
-        }));
+    public String prepareDialogData(JsonNode response) {
+        EditText editName = getView().findViewById(R.id.hikingTrailName);
+
+        Double distance = response.get("dist").asDouble(0) / 1000;
+        Integer points = response.get("points").asInt(0);
+        Double time = response.get("time").asDouble(0);
+
+        Integer hours = (int) Math.floor(time);
+        Integer minutes = (int) (60 * (time - Math.floor(time)));
+
+        String result = "";
+        result += getResources().getString(R.string.details_title, editName.toString()) + "\n";
+        result += getResources().getString(R.string.details_dist, distance) + "\n";
+        result += getResources().getString(R.string.details_points, points) + "\n";
+        result += getResources().getString(R.string.details_time, hours,  minutes);
+
+        return result;
+    }
+
+    public void showInfoDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(message);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

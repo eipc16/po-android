@@ -17,12 +17,7 @@ import java.util.List;
 
 public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyViewHolder> implements View.OnClickListener {
 
-    public interface OnItemClickListener {
-        void onItemClick(View v, Integer position);
-    }
-
     private List<PointViewModel> points;
-    private final OnItemClickListener listener;
     private MyViewHolder viewHolder = null;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -34,13 +29,10 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
             this.pointNameView = view.findViewById(R.id.pointName);
             this.pointDeleteButton = view.findViewById(R.id.pointDeleteButton);
         }
-
-
     }
 
-    public PointListAdapter(List<PointViewModel> points, OnItemClickListener listener) {
+    public PointListAdapter(List<PointViewModel> points) {
         this.points = points;
-        this.listener = listener;
     }
 
     @NonNull
@@ -86,5 +78,9 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
     @Override
     public void onClick(View v) {
         removeElement(viewHolder.getAdapterPosition());
+    }
+
+    public List<PointViewModel> getCurrentPoints() {
+        return this.points;
     }
 }
