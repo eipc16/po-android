@@ -47,5 +47,16 @@
     <string name="details_title">Szczegóły trasy: %s</string>
     <string name="details_dist">Dystans: %.2f km</string>
     <string name="details_points">Punkty: %d</string>
-    <string name="details_time">Czas: %2d:%2d</string>
+    <string name="details_time">Czas: %02d:%02d</string>
+
+    <string name="track_list_name">Nazwa trasy</string>
+    <string name="track_list_date">Planowana data</string>
+    <string name="track_list_begin_end">%s ---> %s</string>
+    <string name="track_list_unkown">Nieznana</string>
+
+    <string name="track_list_dialog_remove">Czy jesteś pewien, że chcesz usunąć trasę? Ta operacja jest nieodwracalna</string>
+    <string name="track_list_dialog_agree">Zatwierdź</string>
+    <string name="track_list_dialog_cancel">Odrzuć</string>
+
+    <string name="search_dialog_title">Wybierz punkt trasy</string>
 </resources>

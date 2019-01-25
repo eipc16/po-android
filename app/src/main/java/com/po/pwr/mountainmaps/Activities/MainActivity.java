@@ -30,6 +30,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,12 +41,12 @@ public class MainActivity extends AppCompatActivity {
     public DrawerLayout mDrawerLayout;
     public int curr_fragment = 0;
 
-    public static Integer hiker_id = 2;
+    public static Integer hiker_id = 1;
     public static String request_address = "http://192.168.1.104:8080";
 
     public RestTemplate restTemplate;
 
-    public final Set<PointViewModel> pointSet = new HashSet<>();
+    public final static HashMap<Integer, PointViewModel> pointSet = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         setRestTemplate();
         loadPoints();
+
 
         setUpStartView(savedInstanceState);
     }
@@ -163,8 +166,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTaskExecuted(ResponseEntity<List<PointViewModel>> result) {
-                pointSet.addAll(result.getBody());
-                Log.d("SET", pointSet.toString());
+                List<PointViewModel> pointList = result.getBody();
+
+                for (PointViewModel pm: pointList)
+                    pointSet.put(pm.getId(), pm);
+
             }
 
         }).execute(request_address + "points/all");
