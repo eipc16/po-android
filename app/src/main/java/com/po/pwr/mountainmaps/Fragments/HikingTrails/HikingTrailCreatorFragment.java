@@ -1,13 +1,10 @@
 package com.po.pwr.mountainmaps.Fragments.HikingTrails;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,7 +20,6 @@ import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
 import com.po.pwr.mountainmaps.Models.PointViewModel;
 import com.po.pwr.mountainmaps.R;
-import com.po.pwr.mountainmaps.Utils.Adapters.HikingTrailListAdapter;
 import com.po.pwr.mountainmaps.Utils.Adapters.PointListAdapter;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
 
@@ -31,11 +27,16 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -157,7 +158,74 @@ public class HikingTrailCreatorFragment extends Fragment {
     }
 
     public void setUpSaveButton(final View view) {
-        //createSearchDialog();
+        Button saveButton = view.findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String requestString = request_address;
+                if(hikingTrail == null) { /*dodanie nowej trasy*/
+                    EditText trailName = view.findViewById(R.id.hikingTrailName);
+                    EditText trailDate = view.findViewById(R.id.hikingTrailDate);
+
+                    requestString += "hikers/" + hiker_id
+                            + "/hiking_trails/add?trail_name=" + trailName.getText().toString()
+                            + "&trail_date=" + parseDate(trailDate.getText().toString())
+                            + "&trail_points=";
+
+                    for (int i = 0; i < currentTrailPoints.size(); i++) {
+                        requestString += currentTrailPoints.get(i).getId();
+
+                        if(i < currentTrailPoints.size() - 1)
+                            requestString += ",";
+                    }
+
+                    Log.d("punkty_c", requestString);
+                } else { /*modyfikacja istniejacej trasy*/
+                    requestString += "hiking_trails/" + hikingTrail.getId()
+                            + "/update?name=" + hikingTrail.getName()
+                            + "&date=" + hikingTrail.getDate()
+                            + "&pointList=";
+
+                    for (int i = 0; i < currentTrailPoints.size(); i++) {
+                        requestString += currentTrailPoints.get(i).getId();
+
+                        if(i < currentTrailPoints.size() - 1)
+                            requestString += ",";
+                    }
+
+                    requestString += "&finished=" + hikingTrail.isFinished();
+
+                    Log.d("punkty_m", requestString);
+                }
+
+                new SpringRequestTask<>(HttpMethod.POST, new SpringRequestTask.OnSpringTaskListener<JsonNode>() {
+                    @Override
+                    public ResponseEntity<JsonNode> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                        return restTemplate.exchange(url, method, null, JsonNode.class);
+                    }
+
+                    @Override
+                    public void onTaskExecuted(ResponseEntity<JsonNode> result) {
+
+                    }
+
+                }).execute(requestString);
+            }
+        });
+    }
+
+    public Date parseDate(String dateString) {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date date = null;
+
+        try {
+            date = sdf1.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        return sqlDate;
     }
 
     public void createSearchDialog() {
@@ -202,15 +270,20 @@ public class HikingTrailCreatorFragment extends Fragment {
     public void updateData(final View view) {
         MainActivity activity = ((MainActivity) getActivity());
 
+        EditText editName = view.findViewById(R.id.hikingTrailName);
+        EditText editDate = view.findViewById(R.id.hikingTrailDate);
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        String formattedDate = dateFormat.format(cal.getTime());
+        editDate.setText(formattedDate);
+
         if(activity != null) {
             activity.curr_fragment = id;
             activity.getSupportActionBar().setTitle(title);
         }
 
         if(hikingTrail != null) {
-            EditText editName = view.findViewById(R.id.hikingTrailName);
-            EditText editDate = view.findViewById(R.id.hikingTrailDate);
-
             editName.setText(hikingTrail.getName());
             editDate.setText(hikingTrail.getDate().toString());
 
