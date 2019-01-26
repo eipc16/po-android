@@ -130,18 +130,20 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
                     public void onClick(DialogInterface dialog, int id) {
                         Log.d("POSITION", position.toString());
 
-                        new SpringRequestTask<JsonNode>(HttpMethod.POST, new SpringRequestTask.OnSpringTaskListener<JsonNode>() {
+                        new SpringRequestTask<>(HttpMethod.POST, new SpringRequestTask.OnSpringTaskListener<String>() {
                             @Override
-                            public ResponseEntity<JsonNode> request(RestTemplate restTemplate, String url, HttpMethod method) {
-                                return restTemplate.exchange(url, method, null, JsonNode.class);
+                            public ResponseEntity<String> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                                return restTemplate.exchange(url, method, null, String.class);
                             }
 
                             @Override
-                            public void onTaskExecuted(ResponseEntity<JsonNode> result) {
-                                JsonNode response = result.getBody();
-                                Log.d("RESPONSE", response.toString());
-                                if(response.toString().equals("deleted")) {
+                            public void onTaskExecuted(ResponseEntity<String> result) {
+                                String response = result.getBody();
+                                Log.d("RESPONSE", response);
+                                if(response.equals("deleted")) {
                                     Toast.makeText(context, "Trasa została usunięta!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "Błąd przy usuwaniu trasy!", Toast.LENGTH_SHORT).show();
                                 }
                             }
 

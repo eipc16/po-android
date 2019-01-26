@@ -106,6 +106,8 @@ public class HikingTrailCreatorFragment extends Fragment {
                 if(currentTrailPoints.size() > 1) {
                     Collections.reverse(currentTrailPoints);
                     updatePointList(getView(), currentTrailPoints);
+                } else {
+                    Toast.makeText(getContext(), "Podania trasa nie ma zdefiniowanych żadnych punktów!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -212,15 +214,34 @@ public class HikingTrailCreatorFragment extends Fragment {
                     Log.d("punkty_m", requestString);
                 }
 
-                new SpringRequestTask<>(HttpMethod.POST, new SpringRequestTask.OnSpringTaskListener<JsonNode>() {
+                new SpringRequestTask<>(HttpMethod.POST, new SpringRequestTask.OnSpringTaskListener<String>() {
                     @Override
-                    public ResponseEntity<JsonNode> request(RestTemplate restTemplate, String url, HttpMethod method) {
-                        return restTemplate.exchange(url, method, null, JsonNode.class);
+                    public ResponseEntity<String> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                        return restTemplate.exchange(url, method, null, String.class);
                     }
 
                     @Override
-                    public void onTaskExecuted(ResponseEntity<JsonNode> result) {
+                    public void onTaskExecuted(ResponseEntity<String> result) {
+                        String response = result.getBody();
+                        String toastText = "";
+                        boolean trailCreated = false;
+                        if(response.equals("err_not_enough_points")) {
+                            toastText = "Niewystarczająca ilość punktów";
+                        } else if(response.equals("err_begin_equals_end")) {
+                            toastText = "Punkt startowy i końcowy odcinka jest taki sam!";
+                        } else if(response.equals("err_no_points_found")) {
+                            toastText = "Błąd przy tworzeniu odcinka";
+                        } else if(response.equals("err_section_fail")) {
+                            toastText = "Błąd przy tworzeniu odcinka!";
+                        } else {
+                            toastText = "Pomyślnie utworzono trasę!";
+                            trailCreated = true;
+                        }
 
+                        Toast.makeText(getContext(), toastText, Toast.LENGTH_SHORT).show();
+
+                        if(trailCreated)
+                            getFragmentManager().popBackStack();
                     }
 
                 }).execute(requestString);
