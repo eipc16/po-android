@@ -59,4 +59,7 @@
     <string name="track_list_dialog_cancel">Odrzuć</string>
 
     <string name="search_dialog_title">Wybierz punkt trasy</string>
+
+    <string name="generated_dialog_min">Długość minimalna</string>
+    <string name="generated_dialog_max">Długość maksymalna</string>
 </resources>
