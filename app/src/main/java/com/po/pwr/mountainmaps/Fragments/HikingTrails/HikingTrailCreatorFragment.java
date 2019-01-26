@@ -1,12 +1,14 @@
 package com.po.pwr.mountainmaps.Fragments.HikingTrails;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Adapters.PointListAdapter;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -31,8 +34,6 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -105,6 +106,8 @@ public class HikingTrailCreatorFragment extends Fragment {
                 if(currentTrailPoints.size() > 1) {
                     Collections.reverse(currentTrailPoints);
                     updatePointList(getView(), currentTrailPoints);
+                } else {
+                    Toast.makeText(getContext(), "Podania trasa nie ma zdefiniowanych żadnych punktów!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -155,6 +158,18 @@ public class HikingTrailCreatorFragment extends Fragment {
                 createSearchDialog();
             }
         });
+
+        addButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(final View v) {
+                if(currentTrailPoints.size() != 2){
+                    Toast.makeText(getContext(), "Trasa może zostać automatycznie wygenerowana tylko przy 2 określonych punktach!", Toast.LENGTH_LONG).show();
+                } else {
+                    createGenerateDialog();
+                }
+                return true;
+            }
+        });
     }
 
     public void setUpSaveButton(final View view) {
@@ -199,15 +214,34 @@ public class HikingTrailCreatorFragment extends Fragment {
                     Log.d("punkty_m", requestString);
                 }
 
-                new SpringRequestTask<>(HttpMethod.POST, new SpringRequestTask.OnSpringTaskListener<JsonNode>() {
+                new SpringRequestTask<>(HttpMethod.POST, new SpringRequestTask.OnSpringTaskListener<String>() {
                     @Override
-                    public ResponseEntity<JsonNode> request(RestTemplate restTemplate, String url, HttpMethod method) {
-                        return restTemplate.exchange(url, method, null, JsonNode.class);
+                    public ResponseEntity<String> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                        return restTemplate.exchange(url, method, null, String.class);
                     }
 
                     @Override
-                    public void onTaskExecuted(ResponseEntity<JsonNode> result) {
+                    public void onTaskExecuted(ResponseEntity<String> result) {
+                        String response = result.getBody();
+                        String toastText = "";
+                        boolean trailCreated = false;
+                        if(response.equals("err_not_enough_points")) {
+                            toastText = "Niewystarczająca ilość punktów";
+                        } else if(response.equals("err_begin_equals_end")) {
+                            toastText = "Punkt startowy i końcowy odcinka jest taki sam!";
+                        } else if(response.equals("err_no_points_found")) {
+                            toastText = "Błąd przy tworzeniu odcinka";
+                        } else if(response.equals("err_section_fail")) {
+                            toastText = "Błąd przy tworzeniu odcinka!";
+                        } else {
+                            toastText = "Pomyślnie utworzono trasę!";
+                            trailCreated = true;
+                        }
 
+                        Toast.makeText(getContext(), toastText, Toast.LENGTH_SHORT).show();
+
+                        if(trailCreated)
+                            getFragmentManager().popBackStack();
                     }
 
                 }).execute(requestString);
@@ -227,6 +261,75 @@ public class HikingTrailCreatorFragment extends Fragment {
 
         java.sql.Date sqlDate = new java.sql.Date(date.getTime());
         return sqlDate;
+    }
+
+    public boolean getGeneratedPointList(final View view, Integer min_length, Integer max_length) {
+        boolean result = true;
+        List<PointViewModel> generatedPointList = new ArrayList<>();
+
+        Integer begin_id = currentTrailPoints.get(0).getId();
+        Integer end_id = currentTrailPoints.get(1).getId();
+
+                    /*
+                       DIALOG z max min odleglosc ;)))))
+                     */
+        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<PointViewModel>>() {
+            @Override
+            public ResponseEntity<List<PointViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<PointViewModel>>() {
+                });
+            }
+
+            @Override
+            public void onTaskExecuted(ResponseEntity<List<PointViewModel>> result) {
+                List<PointViewModel> response = result.getBody();
+                if(!response.isEmpty()) {
+                    currentTrailPoints.clear();
+                    currentTrailPoints.addAll(response);
+                    updatePointList(view, currentTrailPoints);
+                }
+            }
+        }).execute(request_address + "/hiking_trails/generate?begin_id=" + begin_id + "&end_id=" + end_id + "&min=" + min_length + "&max=" + max_length);
+
+        if(currentTrailPoints.isEmpty()) {
+            Toast.makeText(getContext(), "Nie można stworzyć trasy z podanych odcinków!", Toast.LENGTH_SHORT).show();
+            result = false;
+        }
+        return result;
+    }
+
+    public void createGenerateDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View view = inflater.inflate(R.layout.hiking_trail_creator_generate_dialog, null);
+        builder.setView(view)
+                .setPositiveButton(R.string.track_list_dialog_agree, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        EditText minLengthField = view.findViewById(R.id.minLengthField);
+                        EditText maxLengthField = view.findViewById(R.id.maxLengthField);
+
+                        Integer min_length = Integer.parseInt(minLengthField.getText().toString());
+                        Integer max_length = Integer.parseInt(maxLengthField.getText().toString());
+                        if(min_length > 0 && max_length > 0) {
+                            if(max_length > min_length) {
+                                getGeneratedPointList(getView(), min_length, max_length);
+                            } else {
+                                Toast.makeText(getContext(), "Maksymalna długość trasy musi być większa od długości minimalnej!", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "Podane wartości muszą być większe od 0!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.track_list_dialog_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog generateDialog = builder.create();
+        generateDialog.setTitle("Wprowadź minimalną i maksymalną długość odcinka!");
+        generateDialog.show();
     }
 
     public void createSearchDialog() {
