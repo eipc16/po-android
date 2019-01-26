@@ -16,8 +16,8 @@ import java.util.List;
 
 public class DisplayBadgePagerAdapter extends PagerAdapter {
 
-    private Context context;
-    private List<BadgeViewModel> badges;
+    private final Context context;
+    private final List<BadgeViewModel> badges;
 
     public DisplayBadgePagerAdapter(Context context, List<BadgeViewModel> badges) {
         this.context = context;
@@ -55,6 +55,6 @@ public class DisplayBadgePagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
-        return view == o;
+        return view.equals(o);
     }
 }

@@ -24,7 +24,7 @@ public class BadgeViewModel extends ViewModel {
     private Date date;
 
     public BadgeViewModel() {
-
+        //Used to map fields from JSON format
     }
 
     public BadgeViewModel(Integer id, String display_name, String name, Date date) {
@@ -60,10 +60,16 @@ public class BadgeViewModel extends ViewModel {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof BadgeViewModel))
+        if(!(o instanceof BadgeViewModel)) {
             return false;
+        }
 
         return ((BadgeViewModel) o).getId().equals(this.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
     }
 
     @Override

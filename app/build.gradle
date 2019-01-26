@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'checkstyle'
+apply plugin: 'pmd'
 
 android {
     compileSdkVersion 28
@@ -84,5 +86,38 @@ dependencies {
 repositories {
     maven {
         url 'https://repo.spring.io/libs-milestone'
+    }
+}
+
+task pmd(type: Pmd) {
+    description 'Identifying potential problems mainly dead code, duplicated code, cyclomatic complexity and overcomplicated expressions'
+    group 'verification'
+    ruleSetFiles = files("$project.rootDir/tools/rules-pmd.xml")
+    source = fileTree('src/main/java')
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html.destination = "$project.buildDir/outputs/pmd/pmd.html"
+    }
+}
+
+task checkstyle(type: Checkstyle) {
+    description 'Check code standard'
+    group 'verification'
+    configFile file("${project.rootDir}/tools/rules-checkstyle.xml")
+    source fileTree('src/main/java')
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    classpath = files()
+    showViolations true
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+        html.destination = "$project.buildDir/outputs/checkstyle/checkstyle.html"
     }
 }

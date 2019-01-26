@@ -20,7 +20,7 @@ public class HikerViewModel extends ViewModel {
     }
 
     public HikerViewModel() {
-
+        //Used to map fields from JSON format
     }
 
     public String toString() {

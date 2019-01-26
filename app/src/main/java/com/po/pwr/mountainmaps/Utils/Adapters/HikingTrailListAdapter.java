@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailCreatorFragment;
 import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
@@ -36,9 +35,9 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailListAdapter.MyViewHolder> implements OnTrailClickListener {
 
-    private List<HikingTrailViewModel> hikingTrails;
-    private Context context;
-    private FragmentManager fragmentManager;
+    final List<HikingTrailViewModel> hikingTrails;
+    final Context context;
+    private final FragmentManager fragmentManager;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -77,8 +76,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         ConstraintLayout  l = (ConstraintLayout) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.hiking_trail, viewGroup, false);
-        MyViewHolder vh = new MyViewHolder(l);
-        return vh;
+        return new MyViewHolder(l);
     }
 
     @Override
@@ -103,15 +101,16 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
             endPointName = MainActivity.pointSet.get(hikingTrail.getPoints().get(hikingTrails.get(i).getPoints().size() - 1)).getName();
         }
 
-        if(!hikingTrail.isFinished())
+        if(!hikingTrail.isFinished()) {
             statusImage.setVisibility(View.INVISIBLE);
+        }
 
         point.setText(context.getResources().getString(R.string.track_list_begin_end, startPointName, endPointName));
 
         myViewHolder.bind(myViewHolder.layout, this);
     }
 
-    private void removeElement(int position) {
+    void removeElement(int position) {
         if(position > -1) {
             hikingTrails.remove(position);
             notifyItemRemoved(position);
@@ -140,7 +139,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
                             public void onTaskExecuted(ResponseEntity<String> result) {
                                 String response = result.getBody();
                                 Log.d("RESPONSE", response);
-                                if(response.equals("deleted")) {
+                                if("deleted".equals(response)) {
                                     Toast.makeText(context, "Trasa została usunięta!", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(context, "Błąd przy usuwaniu trasy!", Toast.LENGTH_SHORT).show();
@@ -153,7 +152,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
                 })
                 .setNegativeButton(R.string.track_list_dialog_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
+                        dialog.cancel();
                     }
                 });
 
@@ -184,8 +183,9 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
 
     @Override
     public boolean onLongLick(View v, Integer position) {
-        if(hikingTrails.get(position).isFinished())
+        if(hikingTrails.get(position).isFinished()) {
             return false;
+        }
 
         AlertDialog removeDialog = createDialog(position);
         removeDialog.show();

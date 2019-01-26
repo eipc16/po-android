@@ -18,7 +18,6 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 
 public class HikerSelectionFragment extends Fragment {
-
     public final static Integer id = 3;
     public String title;
 

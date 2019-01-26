@@ -10,14 +10,13 @@ import org.springframework.web.client.RestTemplate;
 
 public class SpringRequestTask<T> extends AsyncTask<String, Void, ResponseEntity<T>> {
 
-    private HttpMethod method;
+    private final HttpMethod method;
+    private final OnSpringTaskListener<T> listener;
 
     public interface OnSpringTaskListener<T> {
         ResponseEntity<T> request(RestTemplate restTemplate, String url, HttpMethod method);
         void onTaskExecuted(ResponseEntity<T> result);
     }
-
-    private OnSpringTaskListener<T> listener;
 
     public SpringRequestTask(HttpMethod method, OnSpringTaskListener<T> listener) {
         this.method = method;
@@ -45,9 +44,10 @@ public class SpringRequestTask<T> extends AsyncTask<String, Void, ResponseEntity
         super.onPostExecute(result);
         //Do anything with response..
 
-        if(result != null)
+        if(result != null) {
             listener.onTaskExecuted(result);
-        else
+        } else {
             Log.e("Async Request Error", "Result is NULL");
+        }
     }
 }

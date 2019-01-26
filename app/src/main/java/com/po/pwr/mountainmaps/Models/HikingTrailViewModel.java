@@ -36,16 +36,12 @@ public class HikingTrailViewModel extends ViewModel implements Serializable {
     }
 
     public HikingTrailViewModel() {
-
+        //Used to map fields from JSON format
     }
 
     public List<Integer> getPoints() {
         Log.d("Lista", pointsIds != null ? pointsIds.toString() : "Nie ma mnie");
         return this.pointsIds;
-    }
-
-    public void setPointsIds(List<Integer> pointsIds) {
-        this.pointsIds = pointsIds;
     }
 
     public Integer getId() {
@@ -66,8 +62,9 @@ public class HikingTrailViewModel extends ViewModel implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof HikingTrailViewModel))
+        if(!(o instanceof HikingTrailViewModel)) {
             return false;
+        }
 
         HikingTrailViewModel other = (HikingTrailViewModel) o;
         return this.id.equals(other.id);

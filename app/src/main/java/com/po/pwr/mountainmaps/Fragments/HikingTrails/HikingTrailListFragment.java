@@ -1,32 +1,22 @@
 package com.po.pwr.mountainmaps.Fragments.HikingTrails;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
-import com.po.pwr.mountainmaps.Models.BadgeViewModel;
 import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
 import com.po.pwr.mountainmaps.R;
-import com.po.pwr.mountainmaps.Utils.Adapters.DisplayBadgePagerAdapter;
 import com.po.pwr.mountainmaps.Utils.Adapters.HikingTrailListAdapter;
-import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -46,10 +36,10 @@ public class HikingTrailListFragment extends Fragment {
     public final static Integer id = 0;
     public String title;
 
-    private final Set<HikingTrailViewModel> hikingTrails = new HashSet<>();
+    final Set<HikingTrailViewModel> hikingTrails = new HashSet<>();
 
     public HikingTrailListFragment() {
-
+        //Create new HikingTrailListFragment
     }
 
     public static HikingTrailListFragment newInstance(String title) {
@@ -73,6 +63,7 @@ public class HikingTrailListFragment extends Fragment {
         title = getResources().getString(R.string.trips_drawer);
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
+        ((MainActivity) getActivity()).loadPoints();
 
         FloatingActionButton floatingButton = view.findViewById(R.id.newHikingTrailButton);
         floatingButton.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +86,7 @@ public class HikingTrailListFragment extends Fragment {
 
     public void loadUserHikingTrails(final View view) {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<HikingTrailViewModel>>() {
+
             @Override
             public ResponseEntity<List<HikingTrailViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
                 return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<HikingTrailViewModel>>() {
@@ -110,7 +102,7 @@ public class HikingTrailListFragment extends Fragment {
         }).execute(request_address + "/hikers/" + hiker_id + "/hiking_trails");
     }
 
-    private void updateAdapter(View view) {
+    void updateAdapter(View view) {
         final List<HikingTrailViewModel> hikingTrailList = new ArrayList<>();
         hikingTrailList.addAll(hikingTrails);
 
@@ -134,6 +126,7 @@ public class HikingTrailListFragment extends Fragment {
         loadUserHikingTrails(getView());
         updateAdapter(getView());
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
