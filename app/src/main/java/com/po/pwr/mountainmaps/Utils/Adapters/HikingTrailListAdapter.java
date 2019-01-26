@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
 import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailCreatorFragment;
-import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
+import com.po.pwr.mountainmaps.Models.HikingTrailModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Listeners.OnTrailClickListener;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
@@ -35,7 +35,7 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailListAdapter.MyViewHolder> implements OnTrailClickListener {
 
-    final List<HikingTrailViewModel> hikingTrails;
+    final List<HikingTrailModel> hikingTrails;
     final Context context;
     private final FragmentManager fragmentManager;
 
@@ -65,7 +65,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         }
     }
 
-    public HikingTrailListAdapter(List<HikingTrailViewModel> hikingTrails, Context context, FragmentManager fragmentManager) {
+    public HikingTrailListAdapter(List<HikingTrailModel> hikingTrails, Context context, FragmentManager fragmentManager) {
         this.hikingTrails = hikingTrails;
         this.context = context;
         this.fragmentManager = fragmentManager;
@@ -91,7 +91,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
 
         TextView point = myViewHolder.layout.findViewById(R.id.hikingTrailPoints);
 
-        HikingTrailViewModel hikingTrail = hikingTrails.get(i);
+        HikingTrailModel hikingTrail = hikingTrails.get(i);
 
         String startPointName = context.getResources().getString(R.string.track_list_unkown);
         String endPointName = context.getResources().getString(R.string.track_list_unkown);
@@ -166,7 +166,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
 
     @Override
     public void onItemClick(View v, Integer position) {
-        HikingTrailViewModel hikingTrail = hikingTrails.get(position);
+        HikingTrailModel hikingTrail = hikingTrails.get(position);
 
         if(!hikingTrails.get(position).isFinished()) {
             Fragment fragment = HikingTrailCreatorFragment.newInstance(context.getResources().getString(R.string.update_hikingtrail), hikingTrail);

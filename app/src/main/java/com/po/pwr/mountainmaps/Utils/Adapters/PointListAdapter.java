@@ -9,14 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.po.pwr.mountainmaps.Models.PointViewModel;
+import com.po.pwr.mountainmaps.Models.PointModel;
 import com.po.pwr.mountainmaps.R;
 
 import java.util.List;
 
 public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyViewHolder> implements View.OnClickListener {
 
-    private final List<PointViewModel> points;
+    private final List<PointModel> points;
     private MyViewHolder viewHolder = null;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -30,7 +30,7 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
         }
     }
 
-    public PointListAdapter(List<PointViewModel> points) {
+    public PointListAdapter(List<PointModel> points) {
         this.points = points;
     }
 

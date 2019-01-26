@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.po.pwr.mountainmaps.Activities.MainActivity;
-import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
+import com.po.pwr.mountainmaps.Models.HikingTrailModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Adapters.HikingTrailListAdapter;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
@@ -32,11 +32,14 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 
+/**
+ * Fragment zawierajace liste tras turysty
+ */
 public class HikingTrailListFragment extends Fragment {
     public final static Integer id = 0;
     public String title;
 
-    final Set<HikingTrailViewModel> hikingTrails = new HashSet<>();
+    final Set<HikingTrailModel> hikingTrails = new HashSet<>();
 
     public HikingTrailListFragment() {
         //Create new HikingTrailListFragment
@@ -84,17 +87,20 @@ public class HikingTrailListFragment extends Fragment {
         return view;
     }
 
+    /** Metoda tworzaca liste z tras turysty pobranych z serwera
+     * @param view Obecny widok
+     */
     public void loadUserHikingTrails(final View view) {
-        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<HikingTrailViewModel>>() {
+        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<HikingTrailModel>>() {
 
             @Override
-            public ResponseEntity<List<HikingTrailViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
-                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<HikingTrailViewModel>>() {
+            public ResponseEntity<List<HikingTrailModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<HikingTrailModel>>() {
                 });
             }
 
             @Override
-            public void onTaskExecuted(ResponseEntity<List<HikingTrailViewModel>> result) {
+            public void onTaskExecuted(ResponseEntity<List<HikingTrailModel>> result) {
                 hikingTrails.addAll(result.getBody());
                 updateAdapter(view);
             }
@@ -102,8 +108,11 @@ public class HikingTrailListFragment extends Fragment {
         }).execute(request_address + "/hikers/" + hiker_id + "/hiking_trails");
     }
 
+    /** Metoda odpowiedzialna za aktualizacje danych adaptera obslugujacego liste tras turysty
+     * @param view Obecny widok
+     */
     void updateAdapter(View view) {
-        final List<HikingTrailViewModel> hikingTrailList = new ArrayList<>();
+        final List<HikingTrailModel> hikingTrailList = new ArrayList<>();
         hikingTrailList.addAll(hikingTrails);
 
         final RecyclerView mRecyclerView;

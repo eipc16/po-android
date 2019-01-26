@@ -9,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.po.pwr.mountainmaps.Models.BadgeViewModel;
+import com.po.pwr.mountainmaps.Models.BadgeModel;
 import com.po.pwr.mountainmaps.R;
 
+/**
+ * Fragment wyświetlany przez ViewPager (Lista odznak)
+ */
 public class BadgeDetailFragment extends Fragment {
 
-    BadgeViewModel mViewModel;
+    BadgeModel mViewModel;
 
     public static BadgeDetailFragment newInstance() {
         return new BadgeDetailFragment();
@@ -29,7 +32,7 @@ public class BadgeDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(BadgeViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(BadgeModel.class);
     }
 
 }

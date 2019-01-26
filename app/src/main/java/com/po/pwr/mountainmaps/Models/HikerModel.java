@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HikerViewModel extends ViewModel {
+public class HikerModel extends ViewModel {
 
     @JsonProperty("first_name")
     private String firstName;
@@ -14,12 +14,12 @@ public class HikerViewModel extends ViewModel {
     @JsonProperty("last_name")
     private String lastName;
 
-    public HikerViewModel(String firstName, String lastName){
+    public HikerModel(String firstName, String lastName){
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public HikerViewModel() {
+    public HikerModel() {
         //Used to map fields from JSON format
     }
 

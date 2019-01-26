@@ -1,6 +1,6 @@
 package com.po.pwr.mountainmaps;
 
-import com.po.pwr.mountainmaps.Models.BadgeViewModel;
+import com.po.pwr.mountainmaps.Models.BadgeModel;
 
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ public class BadgeModelTest {
 
     @Test
     public void check_badgeDisplayNameSetter() {
-        BadgeViewModel badge = new BadgeViewModel(1, "Test_1", "badge_01", new Date(2018, 01, 31));
+        BadgeModel badge = new BadgeModel(1, "Test_1", "badge_01", new Date(2018, 01, 31));
         String newName = "Test_2";
         badge.setDisplayName(newName);
         assertEquals(badge.getDisplayName(), newName);
@@ -21,8 +21,8 @@ public class BadgeModelTest {
 
     @Test
     public void check_badgeEqualsWhenIdSame() {
-        BadgeViewModel badge = new BadgeViewModel(23, "Test_1", "badge_01", new Date(2018, 01, 31));
-        BadgeViewModel badge2 = new BadgeViewModel(23, "Test_2", "badge_02", new Date(2018, 01, 31));
+        BadgeModel badge = new BadgeModel(23, "Test_1", "badge_01", new Date(2018, 01, 31));
+        BadgeModel badge2 = new BadgeModel(23, "Test_2", "badge_02", new Date(2018, 01, 31));
         assertEquals(badge, badge2);
     }
 }
