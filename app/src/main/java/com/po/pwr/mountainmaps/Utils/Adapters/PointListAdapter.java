@@ -63,16 +63,20 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
         return points.size();
     }
 
-    private void removeElement(int position) {
-        if(position > -1) {
+    public boolean removeElement(int position) {
+        boolean removed = false;
+        if(position > -1 && position < points.size()) {
             points.remove(position);
             notifyItemRemoved(position);
             notifyItemChanged(position, points.size());
+            removed = true;
         }
 
-        Log.d("New position: ", Integer.valueOf(position).toString());
-        Log.d("New array: ", points.toString());
-        Log.d("New array size: ", Integer.valueOf(points.size()).toString());
+        return removed;
+    }
+
+    public List<PointViewModel> getPoints() {
+        return this.points;
     }
 
     @Override
@@ -82,5 +86,10 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
 
     public List<PointViewModel> getCurrentPoints() {
         return this.points;
+    }
+
+    public void setUpPoints(List<PointViewModel> points) {
+        this.points = points;
+        //notifyDataSetChanged();
     }
 }

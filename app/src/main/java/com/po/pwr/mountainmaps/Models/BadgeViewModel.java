@@ -38,17 +38,32 @@ public class BadgeViewModel extends ViewModel {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getDisplayName() {
         return display_name;
+    }
+
+    public void setDisplayName(String display_name) {
+        this.display_name = display_name;
     }
 
     public String getName() {
         return name;
     }
 
-
     public Date getDate() {
         return date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof BadgeViewModel))
+            return false;
+
+        return ((BadgeViewModel) o).getId().equals(this.id);
     }
 
     @Override

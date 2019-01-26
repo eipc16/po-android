@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,7 +87,7 @@ public class HikingTrailCreatorFragment extends Fragment {
         hikingTrail = (HikingTrailViewModel) getArguments().getSerializable("trail");
 
         updateData(view);
-        updatePointList(view, currentTrailPoints);
+        updateRecyclerViewPointList(view, currentTrailPoints);
 
         setUpReverseButton(view);
         setUpInfoButton(view);
@@ -105,7 +104,7 @@ public class HikingTrailCreatorFragment extends Fragment {
             public void onClick(View v) {
                 if(currentTrailPoints.size() > 1) {
                     Collections.reverse(currentTrailPoints);
-                    updatePointList(getView(), currentTrailPoints);
+                    updateRecyclerViewPointList(getView(), currentTrailPoints);
                 } else {
                     Toast.makeText(getContext(), "Podania trasa nie ma zdefiniowanych żadnych punktów!", Toast.LENGTH_SHORT).show();
                 }
@@ -265,35 +264,37 @@ public class HikingTrailCreatorFragment extends Fragment {
 
     public boolean getGeneratedPointList(final View view, Integer min_length, Integer max_length) {
         boolean result = true;
-        List<PointViewModel> generatedPointList = new ArrayList<>();
 
-        Integer begin_id = currentTrailPoints.get(0).getId();
-        Integer end_id = currentTrailPoints.get(1).getId();
-
-                    /*
-                       DIALOG z max min odleglosc ;)))))
-                     */
-        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<PointViewModel>>() {
-            @Override
-            public ResponseEntity<List<PointViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
-                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<PointViewModel>>() {
-                });
-            }
-
-            @Override
-            public void onTaskExecuted(ResponseEntity<List<PointViewModel>> result) {
-                List<PointViewModel> response = result.getBody();
-                if(!response.isEmpty()) {
-                    currentTrailPoints.clear();
-                    currentTrailPoints.addAll(response);
-                    updatePointList(view, currentTrailPoints);
-                }
-            }
-        }).execute(request_address + "/hiking_trails/generate?begin_id=" + begin_id + "&end_id=" + end_id + "&min=" + min_length + "&max=" + max_length);
-
-        if(currentTrailPoints.isEmpty()) {
-            Toast.makeText(getContext(), "Nie można stworzyć trasy z podanych odcinków!", Toast.LENGTH_SHORT).show();
+        if(currentTrailPoints.size() != 2) {
+            //Toast.makeText(getContext(), "Nie można stworzyć trasy z podanych odcinków!", Toast.LENGTH_SHORT).show();
             result = false;
+        } else if(min_length < 1 || max_length < 1) {
+            //Toast.makeText(getContext(), "Długość trasy musi być większa od zera!", Toast.LENGTH_SHORT).show();
+            result = false;
+        } else if(min_length > max_length) {
+            //Toast.makeText(getContext(), "Długość maksymalna nie może być mniejsza od długości minimalnej!", Toast.LENGTH_SHORT);
+            result = false;
+        } else {
+            Integer begin_id = currentTrailPoints.get(0).getId();
+            Integer end_id = currentTrailPoints.get(1).getId();
+
+            new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<PointViewModel>>() {
+                @Override
+                public ResponseEntity<List<PointViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                    return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<PointViewModel>>() {
+                    });
+                }
+
+                @Override
+                public void onTaskExecuted(ResponseEntity<List<PointViewModel>> result) {
+                    List<PointViewModel> response = result.getBody();
+                    if(!response.isEmpty()) {
+                        setUpPointList(response);
+                        updateRecyclerViewPointList(view, currentTrailPoints);
+                    }
+                }
+            }).execute(request_address + "/hiking_trails/generate?begin_id=" + begin_id + "&end_id=" + end_id + "&min=" + min_length + "&max=" + max_length);
+
         }
         return result;
     }
@@ -350,7 +351,7 @@ public class HikingTrailCreatorFragment extends Fragment {
 
                 if(result.getName() != null) {
                     currentTrailPoints.add(result);
-                    updatePointList(getView(), currentTrailPoints);
+                    updateRecyclerViewPointList(getView(), currentTrailPoints);
                 } else {
                     Toast.makeText(getContext(), "Podany odcinek nie istnieje!", Toast.LENGTH_SHORT).show();
                 }
@@ -397,7 +398,8 @@ public class HikingTrailCreatorFragment extends Fragment {
                 currentTrailPoints.add(allPoints.get(i));
         }
     }
-    public void updatePointList(View view, List<PointViewModel> newPointList) {
+
+    public void updateRecyclerViewPointList(View view, List<PointViewModel> newPointList) {
         RecyclerView mRecyclerView;
         RecyclerView.LayoutManager mLayoutManager;
 
@@ -436,6 +438,17 @@ public class HikingTrailCreatorFragment extends Fragment {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public List<PointViewModel> setUpPointList(List<PointViewModel> trailPoints) {
+        currentTrailPoints.clear();
+        currentTrailPoints.addAll(trailPoints);
+
+        return currentTrailPoints;
+    }
+
+    public List<PointViewModel> getCurrentTrailPoints() {
+        return currentTrailPoints;
     }
 
     @Override
