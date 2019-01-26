@@ -3,7 +3,6 @@ package com.po.pwr.mountainmaps.Utils.Adapters;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import java.util.List;
 
 public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyViewHolder> implements View.OnClickListener {
 
-    private List<PointViewModel> points;
+    private final List<PointViewModel> points;
     private MyViewHolder viewHolder = null;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -75,21 +74,9 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
         return removed;
     }
 
-    public List<PointViewModel> getPoints() {
-        return this.points;
-    }
-
     @Override
     public void onClick(View v) {
         removeElement(viewHolder.getAdapterPosition());
     }
 
-    public List<PointViewModel> getCurrentPoints() {
-        return this.points;
-    }
-
-    public void setUpPoints(List<PointViewModel> points) {
-        this.points = points;
-        //notifyDataSetChanged();
-    }
 }

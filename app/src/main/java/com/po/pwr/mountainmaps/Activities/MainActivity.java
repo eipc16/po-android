@@ -1,6 +1,7 @@
 package com.po.pwr.mountainmaps.Activities;
 
-import android.net.Uri;
+
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -30,11 +30,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
     public RestTemplate restTemplate;
 
-    public final static HashMap<Integer, PointViewModel> pointSet = new HashMap<>();
+    @SuppressLint("UseSparseArrays")
+    public final static Map<Integer, PointViewModel> pointSet = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setRestTemplate();
-        loadPoints();
-
 
         setUpStartView(savedInstanceState);
     }
@@ -85,9 +83,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+
             @Override
             public void onDrawerSlide(@NonNull View view, float v) {
-
+                //Do something when drawer is sliding
             }
 
             @Override
@@ -97,12 +96,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDrawerClosed(@NonNull View view) {
-
+                //Do something when drawer is closed
             }
 
             @Override
             public void onDrawerStateChanged(int i) {
-
+                //Do something when drawer state is changed
             }
         });
 
@@ -158,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadPoints() {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<PointViewModel>>() {
+
             @Override
             public ResponseEntity<List<PointViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
                 return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<PointViewModel>>() {
@@ -168,8 +168,9 @@ public class MainActivity extends AppCompatActivity {
             public void onTaskExecuted(ResponseEntity<List<PointViewModel>> result) {
                 List<PointViewModel> pointList = result.getBody();
 
-                for (PointViewModel pm: pointList)
+                for (PointViewModel pm: pointList) {
                     pointSet.put(pm.getId(), pm);
+                }
 
             }
 
@@ -178,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void loadHiker(final Integer hikerId) {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<HikerViewModel>() {
+
             @Override
             public ResponseEntity<HikerViewModel> request(RestTemplate restTemplate, String url, HttpMethod method) {
                 return restTemplate.exchange(url, method, null, HikerViewModel.class);
@@ -200,11 +202,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

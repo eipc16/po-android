@@ -22,7 +22,7 @@ public class PointViewModel extends ViewModel implements Comparable<PointViewMod
     }
 
     public PointViewModel() {
-
+        //Used to map fields from JSON format
     }
 
 
@@ -52,8 +52,9 @@ public class PointViewModel extends ViewModel implements Comparable<PointViewMod
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof PointViewModel))
+        if(!(o instanceof PointViewModel)) {
             return false;
+        }
 
         PointViewModel other = (PointViewModel) o;
         return this.id.equals(other.id);

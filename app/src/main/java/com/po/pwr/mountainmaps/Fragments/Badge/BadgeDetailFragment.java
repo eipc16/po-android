@@ -14,7 +14,7 @@ import com.po.pwr.mountainmaps.R;
 
 public class BadgeDetailFragment extends Fragment {
 
-    private BadgeViewModel mViewModel;
+    BadgeViewModel mViewModel;
 
     public static BadgeDetailFragment newInstance() {
         return new BadgeDetailFragment();

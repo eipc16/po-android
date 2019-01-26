@@ -22,6 +22,7 @@ import com.po.pwr.mountainmaps.Models.HikingTrailViewModel;
 import com.po.pwr.mountainmaps.Models.PointViewModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Adapters.PointListAdapter;
+import com.po.pwr.mountainmaps.Utils.Helpers.ParseHelperUtility;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,15 +30,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.sql.Date;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
@@ -50,15 +49,14 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailCreatorFragment extends Fragment {
-
-
     public final static Integer id = 3;
     public String title;
 
-    private HikingTrailViewModel hikingTrail;
-    private final List<PointViewModel> currentTrailPoints = new ArrayList<>();
+    HikingTrailViewModel hikingTrail;
+    final List<PointViewModel> currentTrailPoints = new ArrayList<>();
 
     public HikingTrailCreatorFragment() {
+        //Create new HikingTrailCreatorFragment
     }
 
     public static HikingTrailCreatorFragment newInstance(String title, HikingTrailViewModel hikingTrail) {
@@ -123,8 +121,9 @@ public class HikingTrailCreatorFragment extends Fragment {
                     for (int i = 0; i < currentTrailPoints.size(); i++) {
                         infoRequest += currentTrailPoints.get(i).getId();
 
-                        if (i < currentTrailPoints.size() - 1)
+                        if (i < currentTrailPoints.size() - 1) {
                             infoRequest += ",";
+                        }
                     }
 
                     Log.d("info_request", infoRequest);
@@ -138,7 +137,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                         @Override
                         public void onTaskExecuted(ResponseEntity<JsonNode> result) {
                             JsonNode response = result.getBody();
-                            String info = prepareDialogData(response);
+                            String info = ParseHelperUtility.prepareDialogData(getContext(), getView(), response);
                             showInfoDialog(info);
                         }
                     }).execute(infoRequest);
@@ -184,14 +183,15 @@ public class HikingTrailCreatorFragment extends Fragment {
 
                     requestString += "hikers/" + hiker_id
                             + "/hiking_trails/add?trail_name=" + trailName.getText().toString().replace(" ", "%20")
-                            + "&trail_date=" + parseDate(trailDate.getText().toString())
+                            + "&trail_date=" + ParseHelperUtility.parseDate(trailDate.getText().toString())
                             + "&trail_points=";
 
                     for (int i = 0; i < currentTrailPoints.size(); i++) {
                         requestString += currentTrailPoints.get(i).getId();
 
-                        if(i < currentTrailPoints.size() - 1)
+                        if(i < currentTrailPoints.size() - 1) {
                             requestString += ",";
+                        }
                     }
 
                     Log.d("punkty_c", requestString);
@@ -204,8 +204,9 @@ public class HikingTrailCreatorFragment extends Fragment {
                     for (int i = 0; i < currentTrailPoints.size(); i++) {
                         requestString += currentTrailPoints.get(i).getId();
 
-                        if(i < currentTrailPoints.size() - 1)
+                        if(i < currentTrailPoints.size() - 1) {
                             requestString += ",";
+                        }
                     }
 
                     requestString += "&finished=" + hikingTrail.isFinished();
@@ -214,6 +215,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                 }
 
                 new SpringRequestTask<>(HttpMethod.POST, new SpringRequestTask.OnSpringTaskListener<String>() {
+
                     @Override
                     public ResponseEntity<String> request(RestTemplate restTemplate, String url, HttpMethod method) {
                         return restTemplate.exchange(url, method, null, String.class);
@@ -222,25 +224,33 @@ public class HikingTrailCreatorFragment extends Fragment {
                     @Override
                     public void onTaskExecuted(ResponseEntity<String> result) {
                         String response = result.getBody();
-                        String toastText = "";
+                        String toastText;
                         boolean trailCreated = false;
-                        if(response.equals("err_not_enough_points")) {
-                            toastText = "Niewystarczająca ilość punktów";
-                        } else if(response.equals("err_begin_equals_end")) {
-                            toastText = "Punkt startowy i końcowy odcinka jest taki sam!";
-                        } else if(response.equals("err_no_points_found")) {
-                            toastText = "Błąd przy tworzeniu odcinka";
-                        } else if(response.equals("err_section_fail")) {
-                            toastText = "Błąd przy tworzeniu odcinka!";
-                        } else {
-                            toastText = "Pomyślnie utworzono trasę!";
-                            trailCreated = true;
+
+                        switch (response) {
+                            case "err_not_enough_points":
+                                toastText = "Niewystarczająca ilość punktów";
+                                break;
+                            case "err_begin_equals_end":
+                                toastText = "Punkt startowy i końcowy odcinka jest taki sam!";
+                                break;
+                            case "err_no_points_found":
+                                toastText = "Błąd przy tworzeniu odcinka";
+                                break;
+                            case "err_section_fail":
+                                toastText = "Błąd przy tworzeniu odcinka!";
+                                break;
+                            default:
+                                toastText = "Pomyślnie utworzono trasę!";
+                                trailCreated = true;
+                                break;
                         }
 
                         Toast.makeText(getContext(), toastText, Toast.LENGTH_SHORT).show();
 
-                        if(trailCreated)
+                        if(trailCreated) {
                             getFragmentManager().popBackStack();
+                        }
                     }
 
                 }).execute(requestString);
@@ -248,37 +258,24 @@ public class HikingTrailCreatorFragment extends Fragment {
         });
     }
 
-    public Date parseDate(String dateString) {
-        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-        java.util.Date date = null;
-
-        try {
-            date = sdf1.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-        return sqlDate;
-    }
-
     public boolean getGeneratedPointList(final View view, Integer min_length, Integer max_length) {
         boolean result = true;
 
         if(currentTrailPoints.size() != 2) {
-            //Toast.makeText(getContext(), "Nie można stworzyć trasy z podanych odcinków!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Nie można stworzyć trasy z podanych odcinków!", Toast.LENGTH_SHORT).show();
             result = false;
         } else if(min_length < 1 || max_length < 1) {
-            //Toast.makeText(getContext(), "Długość trasy musi być większa od zera!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Długość trasy musi być większa od zera!", Toast.LENGTH_SHORT).show();
             result = false;
         } else if(min_length > max_length) {
-            //Toast.makeText(getContext(), "Długość maksymalna nie może być mniejsza od długości minimalnej!", Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), "Długość maksymalna nie może być mniejsza od długości minimalnej!", Toast.LENGTH_SHORT);
             result = false;
         } else {
             Integer begin_id = currentTrailPoints.get(0).getId();
             Integer end_id = currentTrailPoints.get(1).getId();
 
             new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<PointViewModel>>() {
+
                 @Override
                 public ResponseEntity<List<PointViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
                     return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<PointViewModel>>() {
@@ -335,11 +332,11 @@ public class HikingTrailCreatorFragment extends Fragment {
 
     public void createSearchDialog() {
         final PointViewModel result = new PointViewModel();
-
         new SimpleSearchDialogCompat<>(getContext(), getResources().getString(R.string.search_dialog_title),
-                "Podaj nazwę odcinka", null, initSearchData(), new SearchResultListener<Searchable>() {
+                "Podaj nazwę odcinka", null, (ArrayList) initSearchData(currentTrailPoints), new SearchResultListener<Searchable>() {
             @Override
             public void onSelected(BaseSearchDialogCompat baseSearchDialogCompat, Searchable searchable, int i) {
+
                 for(Map.Entry<Integer, PointViewModel> entry : MainActivity.pointSet.entrySet()) {
                     if(entry.getValue().getName().equals(searchable.getTitle())) {
                         Log.d("model " + entry.getValue().getId(), entry.getValue().toString());
@@ -355,16 +352,17 @@ public class HikingTrailCreatorFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "Podany odcinek nie istnieje!", Toast.LENGTH_SHORT).show();
                 }
+
                 baseSearchDialogCompat.dismiss();
             }
         }).show();
     }
 
-    public ArrayList<Searchable> initSearchData() {
+    public List<Searchable> initSearchData(List<PointViewModel> trailPoints) {
         ArrayList<Searchable> searchList = new ArrayList<>();
 
         for(Map.Entry<Integer, PointViewModel> entry : MainActivity.pointSet.entrySet()) {
-            if(currentTrailPoints.isEmpty() || !entry.getValue().sameName(currentTrailPoints.get(currentTrailPoints.size() - 1))) {
+            if(trailPoints.isEmpty() || !entry.getValue().sameName(trailPoints.get(trailPoints.size() - 1))) {
                 searchList.add(entry.getValue());
             }
         }
@@ -378,7 +376,7 @@ public class HikingTrailCreatorFragment extends Fragment {
         EditText editName = view.findViewById(R.id.hikingTrailName);
         EditText editDate = view.findViewById(R.id.hikingTrailDate);
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
         Calendar cal = Calendar.getInstance();
         String formattedDate = dateFormat.format(cal.getTime());
         editDate.setText(formattedDate);
@@ -392,10 +390,11 @@ public class HikingTrailCreatorFragment extends Fragment {
             editName.setText(hikingTrail.getName());
             editDate.setText(hikingTrail.getDate().toString());
 
-            HashMap<Integer, PointViewModel> allPoints = ((MainActivity) getActivity()).pointSet;
+            Map<Integer, PointViewModel> allPoints = ((MainActivity) getActivity()).pointSet;
 
-            for (Integer i : hikingTrail.getPoints())
+            for (Integer i : hikingTrail.getPoints()) {
                 currentTrailPoints.add(allPoints.get(i));
+            }
         }
     }
 
@@ -408,28 +407,9 @@ public class HikingTrailCreatorFragment extends Fragment {
 
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        
+
         PointListAdapter mRecyclerAdapter = new PointListAdapter(newPointList);
         mRecyclerView.setAdapter(mRecyclerAdapter);
-    }
-
-    public String prepareDialogData(JsonNode response) {
-        EditText editName = getView().findViewById(R.id.hikingTrailName);
-
-        Double distance = response.get("dist").asDouble(0) / 1000;
-        Integer points = response.get("points").asInt(0);
-        Double time = response.get("time").asDouble(0);
-
-        Integer hours = (int) Math.floor(time);
-        Integer minutes = (int) (60 * (time - Math.floor(time)));
-
-        String result = "";
-        result += getResources().getString(R.string.details_title, editName.getText().toString()) + "\n";
-        result += getResources().getString(R.string.details_dist, distance) + "\n";
-        result += getResources().getString(R.string.details_points, points) + "\n";
-        result += getResources().getString(R.string.details_time, hours,  minutes);
-
-        return result;
     }
 
     public void showInfoDialog(String message) {

@@ -1,7 +1,6 @@
 package com.po.pwr.mountainmaps.Fragments.Badge;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -15,25 +14,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.po.pwr.mountainmaps.Models.BadgeViewModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Adapters.DisplayBadgePagerAdapter;
-import com.po.pwr.mountainmaps.Utils.Tasks.RequestTask;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
@@ -45,11 +32,13 @@ public class BadgeDisplayFragment extends Fragment {
     public String title;
 
     public BadgeDisplayFragment() {
+        //Create new BadgeDisplayFragment
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //onCreate
     }
 
     @Override
@@ -67,6 +56,7 @@ public class BadgeDisplayFragment extends Fragment {
 
     public void loadNextBadgeData(final View view) {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<JsonNode>() {
+
             @Override
             public ResponseEntity<JsonNode> request(RestTemplate restTemplate, String url, HttpMethod method) {
                 return restTemplate.exchange(url, method, null, JsonNode.class);
@@ -104,6 +94,7 @@ public class BadgeDisplayFragment extends Fragment {
 
     public void loadUserBadges(final View view) {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<BadgeViewModel>>() {
+
             @Override
             public ResponseEntity<List<BadgeViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
                 return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<BadgeViewModel>>() {
@@ -123,11 +114,13 @@ public class BadgeDisplayFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        //onAttach
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        //onDetach
     }
 
 }
