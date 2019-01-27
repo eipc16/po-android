@@ -36,7 +36,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNot.not;
 
 @RunWith(AndroidJUnit4ClassRunner.class)
-public class HikingTrailCreatorTest {
+public class HikingTrailCreatorAutoTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule =
@@ -62,6 +62,12 @@ public class HikingTrailCreatorTest {
     }
 
     @Test
+    public void check_clickAddButtonOpensDialog() throws InterruptedException {
+        onView(withId(R.id.addButton)).perform(click());
+        Thread.sleep(1000);
+    }
+
+    @Test
     public void check_clickInfoButtonOnEmptyListError() throws InterruptedException {
         onView(withId(R.id.infoButton)).perform(click());
         onView(withText(R.string.err_not_enough_points)).inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
@@ -72,12 +78,6 @@ public class HikingTrailCreatorTest {
     public void check_sendingEmptyTrailReturnsError() throws InterruptedException {
         onView(withId(R.id.saveButton)).perform(click());
         onView(withText(R.string.err_not_enough_points)).inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView())))).check(matches(isDisplayed()));
-        Thread.sleep(1000);
-    }
-
-    @Test
-    public void check_clickAddButtonOpensDialog() throws InterruptedException {
-        onView(withId(R.id.addButton)).perform(click());
         Thread.sleep(1000);
     }
 
