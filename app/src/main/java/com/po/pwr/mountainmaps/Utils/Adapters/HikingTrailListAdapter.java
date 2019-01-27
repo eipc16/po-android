@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
@@ -46,6 +47,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         public MyViewHolder(@NonNull ConstraintLayout  layout) {
             super(layout);
             this.layout = layout;
+
         }
 
         public void bind(final ConstraintLayout item, final OnTrailClickListener listener) {

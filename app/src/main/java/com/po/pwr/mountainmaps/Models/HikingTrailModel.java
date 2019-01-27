@@ -44,6 +44,10 @@ public class HikingTrailModel extends ViewModel implements Serializable {
         return this.pointsIds;
     }
 
+    public void setPoints(List<Integer> points) {
+        this.pointsIds = points;
+    }
+
     public Integer getId() {
         return this.id;
     }

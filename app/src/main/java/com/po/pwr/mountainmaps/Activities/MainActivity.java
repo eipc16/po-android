@@ -35,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Glowna aktywnosc aplikacji
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     public static String request_address = "http://192.168.1.104:8080";
 
     public RestTemplate restTemplate;
+
+    private AtomicBoolean isTestRunning;
 
     @SuppressLint("UseSparseArrays")
     public final static Map<Integer, PointModel> pointSet = new HashMap<>();

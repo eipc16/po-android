@@ -62,4 +62,11 @@
 
     <string name="generated_dialog_min">Długość minimalna</string>
     <string name="generated_dialog_max">Długość maksymalna</string>
+
+    <string name="err_not_enough_points">Niewystarczająca ilość punktów</string>
+    <string name="err_begin_equals_end">Punkt startowy i końcowy odcinka jest taki sam!</string>
+    <string name="err_no_points_found">Błąd przy tworzeniu odcinka</string>
+    <string name="err_section_fail">Błąd przy tworzeniu odcinka</string>
+    <string name="err_no_error">Pomyślnie utworzono trasę!</string>
+    <string name="err_no_points_to_reverse">Podana trasa nie ma zdefiniowanych żadnych punktów!</string>
 </resources>

@@ -117,7 +117,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                     Collections.reverse(currentTrailPoints);
                     AdapterUtils.updateRecyclerViewPointList(getView(), getContext(), currentTrailPoints);
                 } else {
-                    Toast.makeText(getContext(), "Podania trasa nie ma zdefiniowanych żadnych punktów!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.err_no_points_to_reverse), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -158,7 +158,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                         }
                     }).execute(infoRequest);
                 } else {
-                    Toast.makeText(getContext(), "Podana trasa nie jest prawidłowa", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.err_not_enough_points), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -251,19 +251,19 @@ public class HikingTrailCreatorFragment extends Fragment {
 
                         switch (response) {
                             case "err_not_enough_points":
-                                toastText = "Niewystarczająca ilość punktów";
+                                toastText = getResources().getString(R.string.err_not_enough_points);
                                 break;
                             case "err_begin_equals_end":
-                                toastText = "Punkt startowy i końcowy odcinka jest taki sam!";
+                                toastText = getResources().getString(R.string.err_begin_equals_end);
                                 break;
                             case "err_no_points_found":
-                                toastText = "Błąd przy tworzeniu odcinka";
+                                toastText = getResources().getString(R.string.err_no_points_found);
                                 break;
                             case "err_section_fail":
-                                toastText = "Błąd przy tworzeniu odcinka!";
+                                toastText = getResources().getString(R.string.err_section_fail);
                                 break;
                             default:
-                                toastText = "Pomyślnie utworzono trasę!";
+                                toastText = getResources().getString(R.string.err_no_error);
                                 trailCreated = true;
                                 break;
                         }
@@ -313,7 +313,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                 @Override
                 public void onTaskExecuted(ResponseEntity<List<PointModel>> result) {
                     List<PointModel> response = result.getBody();
-                    if(!response.isEmpty()) {
+                    if(response != null && !response.isEmpty()) {
                         setUpPointList(response);
                         AdapterUtils.updateRecyclerViewPointList(getView(), getContext(), currentTrailPoints);
                     }
