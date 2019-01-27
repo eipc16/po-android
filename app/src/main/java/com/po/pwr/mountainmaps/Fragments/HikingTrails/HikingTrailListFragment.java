@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static android.content.Intent.EXTRA_TITLE;
@@ -37,9 +38,9 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
  */
 public class HikingTrailListFragment extends Fragment {
     public final static Integer id = 0;
-    public String title;
+    private String title;
 
-    final Set<HikingTrailModel> hikingTrails = new HashSet<>();
+    private final Set<HikingTrailModel> hikingTrails = new HashSet<>();
 
     public HikingTrailListFragment() {
         //Create new HikingTrailListFragment
@@ -54,18 +55,13 @@ public class HikingTrailListFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_hikingtrail_list, container, false);
         title = getResources().getString(R.string.trips_drawer);
 
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
+        Objects.requireNonNull(((MainActivity) getActivity()).getSupportActionBar()).setTitle(title);
         ((MainActivity) getActivity()).loadPoints();
 
         FloatingActionButton floatingButton = view.findViewById(R.id.newHikingTrailButton);
@@ -74,7 +70,7 @@ public class HikingTrailListFragment extends Fragment {
             public void onClick(View v) {
                 Fragment fragment = HikingTrailCreatorFragment.newInstance(getResources().getString(R.string.new_hikingtrail));
 
-                FragmentTransaction transaction = null;
+                FragmentTransaction transaction;
                 if (getFragmentManager() != null) {
                     transaction = getFragmentManager().beginTransaction();
                     transaction.replace(R.id.fragmentContainer, fragment);
@@ -90,7 +86,7 @@ public class HikingTrailListFragment extends Fragment {
     /** Metoda tworzaca liste z tras turysty pobranych z serwera
      * @param view Obecny widok
      */
-    public void loadUserHikingTrails(final View view) {
+    private void loadUserHikingTrails(final View view) {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<HikingTrailModel>>() {
 
             @Override
@@ -111,9 +107,8 @@ public class HikingTrailListFragment extends Fragment {
     /** Metoda odpowiedzialna za aktualizacje danych adaptera obslugujacego liste tras turysty
      * @param view Obecny widok
      */
-    void updateAdapter(View view) {
-        final List<HikingTrailModel> hikingTrailList = new ArrayList<>();
-        hikingTrailList.addAll(hikingTrails);
+    private void updateAdapter(View view) {
+        final List<HikingTrailModel> hikingTrailList = new ArrayList<>(hikingTrails);
 
         final RecyclerView mRecyclerView;
         RecyclerView.LayoutManager mLayoutManager;
@@ -136,14 +131,4 @@ public class HikingTrailListFragment extends Fragment {
         updateAdapter(getView());
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
 }

@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Pomocnicza klasa do parsowania danych
@@ -34,7 +35,7 @@ public final class ParseHelperUtility {
             Log.e("HikingTrailCreator", e.toString());
         }
 
-        return new Date(date.getTime());
+        return new Date(Objects.requireNonNull(date).getTime());
     }
 
     /** Metoda przygotowujaca ciag znaku z danymi trasy

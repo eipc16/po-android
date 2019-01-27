@@ -22,7 +22,7 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
  */
 public class HikerSelectionFragment extends Fragment {
     public final static Integer id = 3;
-    public String title;
+    private String title;
 
     public static BadgeDetailFragment newInstance() {
         return new BadgeDetailFragment();
@@ -61,8 +61,4 @@ public class HikerSelectionFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 }

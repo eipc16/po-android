@@ -20,10 +20,10 @@ public class PointListAdapter extends RecyclerView.Adapter<PointListAdapter.MyVi
     private MyViewHolder viewHolder = null;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView pointNameView;
-        public ImageView pointDeleteButton;
+        final TextView pointNameView;
+        final ImageView pointDeleteButton;
 
-        public MyViewHolder(View view) {
+        MyViewHolder(View view) {
             super(view);
             this.pointNameView = view.findViewById(R.id.pointName);
             this.pointDeleteButton = view.findViewById(R.id.pointDeleteButton);

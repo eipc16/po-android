@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
 import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
@@ -50,11 +51,11 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
  * Fragment używany do utworzenia nowej lub modyfikacji istniejącej klasy.
  */
 public class HikingTrailCreatorFragment extends Fragment {
-    public final static Integer id = 3;
-    public String title;
+    private final static Integer id = 3;
+    private String title;
 
-    HikingTrailModel hikingTrail;
-    final List<PointModel> currentTrailPoints = new ArrayList<>();
+    private HikingTrailModel hikingTrail;
+    private final List<PointModel> currentTrailPoints = new ArrayList<>();
 
     public HikingTrailCreatorFragment() {
         //Create new HikingTrailCreatorFragment
@@ -91,7 +92,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.hiking_trail_creator_fragment, container, false);
 
-        title = getArguments().getString(EXTRA_TITLE);
+        title = Objects.requireNonNull(getArguments()).getString(EXTRA_TITLE);
         hikingTrail = (HikingTrailModel) getArguments().getSerializable("trail");
 
         updateData(view);
@@ -108,14 +109,14 @@ public class HikingTrailCreatorFragment extends Fragment {
     /** Metoda definiujaca zachowanie dla przycisku Odwróć
      * @param view Obecny widok
      */
-    public void setUpReverseButton(final View view) {
+    private void setUpReverseButton(final View view) {
         Button reverseButton = view.findViewById(R.id.reverseButton);
         reverseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(currentTrailPoints.size() > 1) {
                     Collections.reverse(currentTrailPoints);
-                    AdapterUtils.updateRecyclerViewPointList(getView(), getContext(), currentTrailPoints);
+                    AdapterUtils.updateRecyclerViewPointList(Objects.requireNonNull(getView()), getContext(), currentTrailPoints);
                 } else {
                     Toast.makeText(getContext(), getResources().getString(R.string.err_no_points_to_reverse), Toast.LENGTH_SHORT).show();
                 }
@@ -126,7 +127,7 @@ public class HikingTrailCreatorFragment extends Fragment {
     /** Metoda definiujaca zachowanie dla przycisku Info
      * @param view Obecny widok
      */
-    public void setUpInfoButton(final View view) {
+    private void setUpInfoButton(final View view) {
         Button infoButton = view.findViewById(R.id.infoButton);
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,7 +154,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                         @Override
                         public void onTaskExecuted(ResponseEntity<JsonNode> result) {
                             JsonNode response = result.getBody();
-                            String info = ParseHelperUtility.prepareDialogData(getContext(), getView(), response);
+                            String info = ParseHelperUtility.prepareDialogData(Objects.requireNonNull(getContext()), Objects.requireNonNull(getView()), response);
                             showInfoDialog(info);
                         }
                     }).execute(infoRequest);
@@ -167,7 +168,7 @@ public class HikingTrailCreatorFragment extends Fragment {
     /** Metoda definiujaca zachowanie dla przycisku Dodaj
      * @param view Obecny widok
      */
-    public void setUpAddButton(final View view) {
+    private void setUpAddButton(final View view) {
         Button addButton = view.findViewById(R.id.addButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,7 +193,7 @@ public class HikingTrailCreatorFragment extends Fragment {
     /** Metoda definiujaca zachowanie dla przycisku Zapisz
      * @param view Obecny widok
      */
-    public void setUpSaveButton(final View view) {
+    private void setUpSaveButton(final View view) {
         final EditText trailName = view.findViewById(R.id.hikingTrailName);
         final EditText trailDate = view.findViewById(R.id.hikingTrailDate);
 
@@ -271,7 +272,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                         Toast.makeText(getContext(), toastText, Toast.LENGTH_SHORT).show();
 
                         if(trailCreated) {
-                            getFragmentManager().popBackStack();
+                            Objects.requireNonNull(getFragmentManager()).popBackStack();
                         }
                     }
 
@@ -315,7 +316,7 @@ public class HikingTrailCreatorFragment extends Fragment {
                     List<PointModel> response = result.getBody();
                     if(response != null && !response.isEmpty()) {
                         setUpPointList(response);
-                        AdapterUtils.updateRecyclerViewPointList(getView(), getContext(), currentTrailPoints);
+                        AdapterUtils.updateRecyclerViewPointList(Objects.requireNonNull(getView()), getContext(), currentTrailPoints);
                     }
                 }
             }).execute(request_address + "/hiking_trails/generate?begin_id=" + begin_id + "&end_id=" + end_id + "&min=" + min_length + "&max=" + max_length);
@@ -327,9 +328,9 @@ public class HikingTrailCreatorFragment extends Fragment {
     /** Metoda tworzaca Dialog umozliwiajacy wprowadzenie danych do generowania trasy
      *
      */
-    public void createGenerateDialog() {
+    private void createGenerateDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = Objects.requireNonNull(getActivity()).getLayoutInflater();
         final View view = inflater.inflate(R.layout.hiking_trail_creator_generate_dialog, null);
         builder.setView(view)
                 .setPositiveButton(R.string.track_list_dialog_agree, new DialogInterface.OnClickListener() {
@@ -364,7 +365,7 @@ public class HikingTrailCreatorFragment extends Fragment {
     /** Metoda uruchamiajaca Dialog z lista odcinkow do dodania
      *
      */
-    public void createSearchDialog() {
+    private void createSearchDialog() {
         final PointModel result = new PointModel();
         new SimpleSearchDialogCompat<>(getContext(), getResources().getString(R.string.search_dialog_title),
                 "Podaj nazwę odcinka", null, (ArrayList) initSearchData(currentTrailPoints), new SearchResultListener<Searchable>() {
@@ -382,7 +383,7 @@ public class HikingTrailCreatorFragment extends Fragment {
 
                 if(result.getName() != null) {
                     currentTrailPoints.add(result);
-                    AdapterUtils.updateRecyclerViewPointList(getView(), getContext(), currentTrailPoints);
+                    AdapterUtils.updateRecyclerViewPointList(Objects.requireNonNull(getView()), getContext(), currentTrailPoints);
                 } else {
                     Toast.makeText(getContext(), "Podany odcinek nie istnieje!", Toast.LENGTH_SHORT).show();
                 }
@@ -396,7 +397,7 @@ public class HikingTrailCreatorFragment extends Fragment {
      * @param trailPoints Lista mozliwych punktow
      * @return Lista mozliwych do dodania punktow
      */
-    public List<Searchable> initSearchData(List<PointModel> trailPoints) {
+    private List<Searchable> initSearchData(List<PointModel> trailPoints) {
         ArrayList<Searchable> searchList = new ArrayList<>();
 
         for(Map.Entry<Integer, PointModel> entry : MainActivity.pointSet.entrySet()) {
@@ -411,7 +412,7 @@ public class HikingTrailCreatorFragment extends Fragment {
     /** Metoda aktualizujaca obecna liste punktow w trasie
      * @param view Obecny widok
      */
-    public void updateData(final View view) {
+    private void updateData(final View view) {
         MainActivity activity = ((MainActivity) getActivity());
 
         EditText editName = view.findViewById(R.id.hikingTrailName);
@@ -424,14 +425,14 @@ public class HikingTrailCreatorFragment extends Fragment {
 
         if(activity != null) {
             activity.curr_fragment = id;
-            activity.getSupportActionBar().setTitle(title);
+            Objects.requireNonNull(activity.getSupportActionBar()).setTitle(title);
         }
 
         if(hikingTrail != null) {
             editName.setText(hikingTrail.getName());
             editDate.setText(hikingTrail.getDate().toString());
 
-            Map<Integer, PointModel> allPoints = ((MainActivity) getActivity()).pointSet;
+            Map<Integer, PointModel> allPoints = MainActivity.pointSet;
 
             for (Integer i : hikingTrail.getPoints()) {
                 currentTrailPoints.add(allPoints.get(i));
@@ -442,7 +443,7 @@ public class HikingTrailCreatorFragment extends Fragment {
     /** Metoda uruchamiajaca Dialog z informacjami o trasie
      * @param message Ciag znakow do wyswietlenia
      */
-    public void showInfoDialog(String message) {
+    private void showInfoDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(message);
 
@@ -466,12 +467,6 @@ public class HikingTrailCreatorFragment extends Fragment {
      */
     public List<PointModel> getCurrentTrailPoints() {
         return currentTrailPoints;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // TODO: Use the ViewModel
     }
 
 }
