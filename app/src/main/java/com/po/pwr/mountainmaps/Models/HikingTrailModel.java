@@ -11,7 +11,7 @@ import java.sql.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HikingTrailViewModel extends ViewModel implements Serializable {
+public class HikingTrailModel extends ViewModel implements Serializable {
 
     @JsonProperty("id")
     private Integer id;
@@ -28,20 +28,24 @@ public class HikingTrailViewModel extends ViewModel implements Serializable {
     @JsonProperty("hiking_points")
     private List<Integer> pointsIds;
 
-    public HikingTrailViewModel(Integer id, String name, Date date, Boolean finished) {
+    public HikingTrailModel(Integer id, String name, Date date, Boolean finished) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.finished = finished;
     }
 
-    public HikingTrailViewModel() {
+    public HikingTrailModel() {
         //Used to map fields from JSON format
     }
 
     public List<Integer> getPoints() {
         Log.d("Lista", pointsIds != null ? pointsIds.toString() : "Nie ma mnie");
         return this.pointsIds;
+    }
+
+    public void setPoints(List<Integer> points) {
+        this.pointsIds = points;
     }
 
     public Integer getId() {
@@ -62,11 +66,11 @@ public class HikingTrailViewModel extends ViewModel implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof HikingTrailViewModel)) {
+        if(!(o instanceof HikingTrailModel)) {
             return false;
         }
 
-        HikingTrailViewModel other = (HikingTrailViewModel) o;
+        HikingTrailModel other = (HikingTrailModel) o;
         return this.id.equals(other.id);
     }
 

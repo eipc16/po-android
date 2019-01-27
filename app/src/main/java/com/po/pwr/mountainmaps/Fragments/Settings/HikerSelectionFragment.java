@@ -17,6 +17,9 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 
+/**
+ * Testowy fragment umozliwajacy zmiane obecnego turysty
+ */
 public class HikerSelectionFragment extends Fragment {
     public final static Integer id = 3;
     public String title;

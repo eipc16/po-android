@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import ir.mirrajabi.searchdialog.core.Searchable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PointViewModel extends ViewModel implements Comparable<PointViewModel>, Searchable {
+public class PointModel extends ViewModel implements Comparable<PointModel>, Searchable {
 
     @JsonProperty("id")
     private Integer id;
@@ -16,12 +16,12 @@ public class PointViewModel extends ViewModel implements Comparable<PointViewMod
     @JsonProperty("name")
     private String name;
 
-    public PointViewModel(Integer id, String name) {
+    public PointModel(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public PointViewModel() {
+    public PointModel() {
         //Used to map fields from JSON format
     }
 
@@ -44,7 +44,7 @@ public class PointViewModel extends ViewModel implements Comparable<PointViewMod
 
     @Override
     public String toString() {
-        return "PointViewModel{" +
+        return "PointModel{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
@@ -52,16 +52,16 @@ public class PointViewModel extends ViewModel implements Comparable<PointViewMod
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof PointViewModel)) {
+        if(!(o instanceof PointModel)) {
             return false;
         }
 
-        PointViewModel other = (PointViewModel) o;
+        PointModel other = (PointModel) o;
         return this.id.equals(other.id);
     }
 
     @Override
-    public int compareTo(PointViewModel p) {
+    public int compareTo(PointModel p) {
         return Integer.compare(this.id, p.id);
     }
 
@@ -75,7 +75,7 @@ public class PointViewModel extends ViewModel implements Comparable<PointViewMod
         return this.getName();
     }
 
-    public boolean sameName(PointViewModel p) {
+    public boolean sameName(PointModel p) {
         return this.name.equals(p.name);
     }
 }

@@ -19,14 +19,15 @@ import android.widget.Toast;
 import com.po.pwr.mountainmaps.Fragments.Badge.BadgeDisplayFragment;
 import com.po.pwr.mountainmaps.Fragments.Settings.HikerSelectionFragment;
 import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailListFragment;
-import com.po.pwr.mountainmaps.Models.HikerViewModel;
-import com.po.pwr.mountainmaps.Models.PointViewModel;
+import com.po.pwr.mountainmaps.Models.HikerModel;
+import com.po.pwr.mountainmaps.Models.PointModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,7 +35,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Glowna aktywnosc aplikacji
+ */
 public class MainActivity extends AppCompatActivity {
 
     public DrawerLayout mDrawerLayout;
@@ -45,19 +50,24 @@ public class MainActivity extends AppCompatActivity {
 
     public RestTemplate restTemplate;
 
+    private AtomicBoolean isTestRunning;
+
     @SuppressLint("UseSparseArrays")
-    public final static Map<Integer, PointViewModel> pointSet = new HashMap<>();
+    public final static Map<Integer, PointModel> pointSet = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setRestTemplate();
+        setRestTemplate(new MappingJackson2HttpMessageConverter());
 
         setUpStartView(savedInstanceState);
     }
 
+    /** Metoda inicjujaca wyglad aplikacji, boczne menu etc.
+     * @param savedInstanceState Obecny bundle, aby nie tworzyc nowych fragmentow kiedy sa juz obecne
+     */
     public void setUpStartView(Bundle savedInstanceState) {
         final ActionBar actionBar = getSupportActionBar();
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -149,26 +159,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void setRestTemplate() {
+    /** Metoda inicujaca restTemplate z wybranym parserem JSON
+     * @param messageConverter Wybrany konwerter JSON
+     */
+    public void setRestTemplate(HttpMessageConverter messageConverter) {
         restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-
+        restTemplate.getMessageConverters().add(messageConverter);
     }
 
+    /** Metoda pozwalajaca na pobranie z serwera punktow, z ktorych mozna zbudowac trase
+     *
+     */
     public void loadPoints() {
-        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<PointViewModel>>() {
+        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<PointModel>>() {
 
             @Override
-            public ResponseEntity<List<PointViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
-                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<PointViewModel>>() {
+            public ResponseEntity<List<PointModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<PointModel>>() {
                 });
             }
 
             @Override
-            public void onTaskExecuted(ResponseEntity<List<PointViewModel>> result) {
-                List<PointViewModel> pointList = result.getBody();
+            public void onTaskExecuted(ResponseEntity<List<PointModel>> result) {
+                List<PointModel> pointList = result.getBody();
 
-                for (PointViewModel pm: pointList) {
+                for (PointModel pm: pointList) {
                     pointSet.put(pm.getId(), pm);
                 }
 
@@ -177,29 +192,36 @@ public class MainActivity extends AppCompatActivity {
         }).execute(request_address + "points/all");
     }
 
+    /** Metoda pozwalajaca na pobranie z serwera danych turysty
+     * @param hikerId
+     */
     public void loadHiker(final Integer hikerId) {
-        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<HikerViewModel>() {
+        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<HikerModel>() {
 
             @Override
-            public ResponseEntity<HikerViewModel> request(RestTemplate restTemplate, String url, HttpMethod method) {
-                return restTemplate.exchange(url, method, null, HikerViewModel.class);
+            public ResponseEntity<HikerModel> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                return restTemplate.exchange(url, method, null, HikerModel.class);
             }
 
             @Override
-            public void onTaskExecuted(ResponseEntity<HikerViewModel> result) {
-                HikerViewModel hikerViewModel = result.getBody();
+            public void onTaskExecuted(ResponseEntity<HikerModel> result) {
+                HikerModel hikerModel = result.getBody();
 
-                if(hikerViewModel != null) {
+                if(hikerModel != null) {
                     NavigationView navigationView = findViewById(R.id.nav_view);
                     View headerView = navigationView.getHeaderView(0);
                     TextView navUser = headerView.findViewById(R.id.nav_title);
 
-                    navUser.setText(hikerViewModel.toString());
+                    navUser.setText(hikerModel.toString());
                 }
             }
         }).execute(request_address + "/hikers/" + hikerId + "/credentials/");
     }
 
+    /** Metoda obslugujaca zdarzenie klikniecia w przycisk w lewym gornym rogu ekranu
+     * @param item Wcisniety przycisk
+     * @return Czy zostal wcisniety
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

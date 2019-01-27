@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 
 import com.po.pwr.mountainmaps.Fragments.HikingTrails.HikingTrailCreatorFragment;
-import com.po.pwr.mountainmaps.Models.PointViewModel;
+import com.po.pwr.mountainmaps.Models.PointModel;
 
 import static org.junit.Assert.*;
 
@@ -31,9 +31,9 @@ public class HikingTrailCreatorTest {
 
     @Test
     public void check_hikingTrailSetUpPointList() {
-        List<PointViewModel> pointList = new ArrayList<>();
-        pointList.add(new PointViewModel(1, "Test Point 1"));
-        pointList.add(new PointViewModel(2, "Test Point 2"));
+        List<PointModel> pointList = new ArrayList<>();
+        pointList.add(new PointModel(1, "Test Point 1"));
+        pointList.add(new PointModel(2, "Test Point 2"));
 
         fragment.setUpPointList(pointList);
 
@@ -42,9 +42,9 @@ public class HikingTrailCreatorTest {
 
     @Test
     public void check_hikingTrailGenerationFailWhenLessThanOnePoint() {
-        List<PointViewModel> pointList = new ArrayList<>();
-        pointList.add(new PointViewModel(1, "Test Point 1"));
-        //pointList.add(new PointViewModel(2, "Test Point 2"));
+        List<PointModel> pointList = new ArrayList<>();
+        pointList.add(new PointModel(1, "Test Point 1"));
+        //pointList.add(new PointModel(2, "Test Point 2"));
 
         fragment.setUpPointList(pointList);
         boolean result = fragment.getGeneratedPointList(view, 10, 30);
@@ -53,9 +53,9 @@ public class HikingTrailCreatorTest {
 
     @Test
     public void check_hikingTrailGenerationFailWhenMoreThanPoints() {
-        List<PointViewModel> pointList = new ArrayList<>();
-        pointList.add(new PointViewModel(1, "Test Point 1"));
-        //pointList.add(new PointViewModel(2, "Test Point 2"));
+        List<PointModel> pointList = new ArrayList<>();
+        pointList.add(new PointModel(1, "Test Point 1"));
+        //pointList.add(new PointModel(2, "Test Point 2"));
 
         fragment.setUpPointList(pointList);
         boolean result = fragment.getGeneratedPointList(view, 10, 30);
@@ -64,9 +64,9 @@ public class HikingTrailCreatorTest {
 
     @Test
     public void check_hikingTrailGenerationFailWhenLengthEqualsZero() {
-        List<PointViewModel> pointList = new ArrayList<>();
-        pointList.add(new PointViewModel(1, "Test Point 1"));
-        pointList.add(new PointViewModel(2, "Test Point 2"));
+        List<PointModel> pointList = new ArrayList<>();
+        pointList.add(new PointModel(1, "Test Point 1"));
+        pointList.add(new PointModel(2, "Test Point 2"));
 
         fragment.setUpPointList(pointList);
         boolean result = fragment.getGeneratedPointList(view, 0, 0);
@@ -75,9 +75,9 @@ public class HikingTrailCreatorTest {
 
     @Test
     public void check_hikingTrailGenerationFailWhenMinBiggerThanMax() {
-        List<PointViewModel> pointList = new ArrayList<>();
-        pointList.add(new PointViewModel(1, "Test Point 1"));
-        pointList.add(new PointViewModel(2, "Test Point 2"));
+        List<PointModel> pointList = new ArrayList<>();
+        pointList.add(new PointModel(1, "Test Point 1"));
+        pointList.add(new PointModel(2, "Test Point 2"));
 
         fragment.setUpPointList(pointList);
         boolean result = fragment.getGeneratedPointList(view, 15, 3);

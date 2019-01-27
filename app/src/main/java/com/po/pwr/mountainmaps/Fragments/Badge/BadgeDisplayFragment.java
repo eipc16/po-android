@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.po.pwr.mountainmaps.Models.BadgeViewModel;
+import com.po.pwr.mountainmaps.Models.BadgeModel;
 import com.po.pwr.mountainmaps.R;
 import com.po.pwr.mountainmaps.Utils.Adapters.DisplayBadgePagerAdapter;
 import com.po.pwr.mountainmaps.Utils.Tasks.SpringRequestTask;
@@ -27,6 +27,9 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 
+/**
+ * Fragment zawierający dane o nastepnej odznace i ViewPager ze zdobytymi odznakami
+ */
 public class BadgeDisplayFragment extends Fragment {
     public final static Integer id = 2;
     public String title;
@@ -54,6 +57,9 @@ public class BadgeDisplayFragment extends Fragment {
         return view;
     }
 
+    /** Metoda wyświetlająca dane o następnej do zdobycia odznace
+     * @param view Obecny widok
+     */
     public void loadNextBadgeData(final View view) {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<JsonNode>() {
 
@@ -92,17 +98,20 @@ public class BadgeDisplayFragment extends Fragment {
         }).execute(request_address + "/hikers/" + hiker_id + "/next");
     }
 
+    /** Metoda tworząca ViewPager z odznakami turysty
+     * @param view Obecny widok
+     */
     public void loadUserBadges(final View view) {
-        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<BadgeViewModel>>() {
+        new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<BadgeModel>>() {
 
             @Override
-            public ResponseEntity<List<BadgeViewModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
-                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<BadgeViewModel>>() {
+            public ResponseEntity<List<BadgeModel>> request(RestTemplate restTemplate, String url, HttpMethod method) {
+                return restTemplate.exchange(url, method, null, new ParameterizedTypeReference<List<BadgeModel>>() {
                 });
             }
 
             @Override
-            public void onTaskExecuted(ResponseEntity<List<BadgeViewModel>> result) {
+            public void onTaskExecuted(ResponseEntity<List<BadgeModel>> result) {
                 Log.d("Elo", result.getBody().toString());
                 ViewPager viewPager = view.findViewById(R.id.badge_viewpager);
                 viewPager.setAdapter(new DisplayBadgePagerAdapter(getContext(), result.getBody()));

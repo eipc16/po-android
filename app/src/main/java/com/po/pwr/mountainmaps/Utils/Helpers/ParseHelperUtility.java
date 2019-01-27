@@ -13,10 +13,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+/**
+ * Pomocnicza klasa do parsowania danych
+ */
 public final class ParseHelperUtility {
 
     private ParseHelperUtility() { /*supress Utility warning */ }
 
+    /** Metoda parsujaca date
+     * @param dateString Ciag znakow w formacie daty
+     * @return Data zgodna z formatem SQL
+     */
     public static Date parseDate(String dateString) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
         java.util.Date date = null;
@@ -30,6 +37,12 @@ public final class ParseHelperUtility {
         return new Date(date.getTime());
     }
 
+    /** Metoda przygotowujaca ciag znaku z danymi trasy
+     * @param context Obecny kontekst
+     * @param view Obecny widok
+     * @param response Dane do wyswietlenia
+     * @return Ciag znakow do wyswietlenia
+     */
     public static String prepareDialogData(Context context, View view, JsonNode response) {
         EditText editName = view.findViewById(R.id.hikingTrailName);
 
