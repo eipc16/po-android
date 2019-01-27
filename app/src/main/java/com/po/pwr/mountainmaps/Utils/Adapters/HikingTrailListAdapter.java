@@ -29,28 +29,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Objects;
 
 import static com.po.pwr.mountainmaps.Activities.MainActivity.hiker_id;
 import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
 
 public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailListAdapter.MyViewHolder> implements OnTrailClickListener {
 
-    final List<HikingTrailModel> hikingTrails;
-    final Context context;
+    private final List<HikingTrailModel> hikingTrails;
+    private final Context context;
     private final FragmentManager fragmentManager;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public ConstraintLayout layout;
+        final ConstraintLayout layout;
 
-        public MyViewHolder(@NonNull ConstraintLayout  layout) {
+        MyViewHolder(@NonNull ConstraintLayout layout) {
             super(layout);
             this.layout = layout;
 
         }
 
-        public void bind(final ConstraintLayout item, final OnTrailClickListener listener) {
+        void bind(final ConstraintLayout item, final OnTrailClickListener listener) {
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -99,8 +99,8 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         String endPointName = context.getResources().getString(R.string.track_list_unkown);
 
         if(hikingTrail.getPoints().size() > 1) {
-            startPointName = MainActivity.pointSet.get(hikingTrail.getPoints().get(0)).getName();
-            endPointName = MainActivity.pointSet.get(hikingTrail.getPoints().get(hikingTrails.get(i).getPoints().size() - 1)).getName();
+            startPointName = Objects.requireNonNull(MainActivity.pointSet.get(hikingTrail.getPoints().get(0))).getName();
+            endPointName = Objects.requireNonNull(MainActivity.pointSet.get(hikingTrail.getPoints().get(hikingTrails.get(i).getPoints().size() - 1))).getName();
         }
 
         if(!hikingTrail.isFinished()) {
@@ -112,7 +112,7 @@ public class HikingTrailListAdapter extends RecyclerView.Adapter<HikingTrailList
         myViewHolder.bind(myViewHolder.layout, this);
     }
 
-    void removeElement(int position) {
+    private void removeElement(int position) {
         if(position > -1) {
             hikingTrails.remove(position);
             notifyItemRemoved(position);

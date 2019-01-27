@@ -32,16 +32,10 @@ import static com.po.pwr.mountainmaps.Activities.MainActivity.request_address;
  */
 public class BadgeDisplayFragment extends Fragment {
     public final static Integer id = 2;
-    public String title;
+    private String title;
 
     public BadgeDisplayFragment() {
         //Create new BadgeDisplayFragment
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //onCreate
     }
 
     @Override
@@ -60,7 +54,7 @@ public class BadgeDisplayFragment extends Fragment {
     /** Metoda wyświetlająca dane o następnej do zdobycia odznace
      * @param view Obecny widok
      */
-    public void loadNextBadgeData(final View view) {
+    private void loadNextBadgeData(final View view) {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<JsonNode>() {
 
             @Override
@@ -101,7 +95,7 @@ public class BadgeDisplayFragment extends Fragment {
     /** Metoda tworząca ViewPager z odznakami turysty
      * @param view Obecny widok
      */
-    public void loadUserBadges(final View view) {
+    private void loadUserBadges(final View view) {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<List<BadgeModel>>() {
 
             @Override
@@ -118,18 +112,6 @@ public class BadgeDisplayFragment extends Fragment {
             }
 
         }).execute(request_address + "/hikers/" + hiker_id + "/badges");
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        //onAttach
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        //onDetach
     }
 
 }

@@ -35,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -42,13 +43,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MainActivity extends AppCompatActivity {
 
-    public DrawerLayout mDrawerLayout;
+    private DrawerLayout mDrawerLayout;
     public int curr_fragment = 0;
 
     public static Integer hiker_id = 1;
     public static String request_address = "http://192.168.1.104:8080";
 
-    public RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     private AtomicBoolean isTestRunning;
 
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     /** Metoda inicjujaca wyglad aplikacji, boczne menu etc.
      * @param savedInstanceState Obecny bundle, aby nie tworzyc nowych fragmentow kiedy sa juz obecne
      */
-    public void setUpStartView(Bundle savedInstanceState) {
+    private void setUpStartView(Bundle savedInstanceState) {
         final ActionBar actionBar = getSupportActionBar();
         mDrawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     transaction.addToBackStack(null);
                     transaction.commit();
 
-                    actionBar.setTitle(menuItem.getTitle());
+                    Objects.requireNonNull(actionBar).setTitle(menuItem.getTitle());
                 } else {
                     Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
                 }
@@ -162,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
     /** Metoda inicujaca restTemplate z wybranym parserem JSON
      * @param messageConverter Wybrany konwerter JSON
      */
-    public void setRestTemplate(HttpMessageConverter messageConverter) {
+    private void setRestTemplate(HttpMessageConverter messageConverter) {
         restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().add(messageConverter);
     }
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
     /** Metoda pozwalajaca na pobranie z serwera danych turysty
      * @param hikerId
      */
-    public void loadHiker(final Integer hikerId) {
+    private void loadHiker(final Integer hikerId) {
         new SpringRequestTask<>(HttpMethod.GET, new SpringRequestTask.OnSpringTaskListener<HikerModel>() {
 
             @Override

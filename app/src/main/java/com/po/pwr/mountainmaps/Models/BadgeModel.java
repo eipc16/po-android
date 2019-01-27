@@ -61,7 +61,7 @@ public class BadgeModel extends ViewModel {
     /** Pozwala na pobranie id odznaki
      * @return Id odznaki
      */
-    public Integer getId() {
+    private Integer getId() {
         return id;
     }
 
